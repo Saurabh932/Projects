@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake, Water, Gun</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Snake, Water, and Gun</h1>
+        <h3>Let's Play!</h3>
+
+        <!-- Game form -->
+        <form action="/play" method="POST" class="game-form">
+            <label for="game">Choose your move:</label>
+            <select name="game" id="game">
+                <option value="snake">Snake</option>
+                <option value="water">Water</option>
+                <option value="gun">Gun</option>
+            </select>
+
+            <button type="submit">Shoot!</button>
+        </form>
+
+        <!-- Result section (shown only when FastAPI sends result) -->
+        {% if result %}
+        <div class="result-box">
+            <h2>{{ result }}</h2>
+            <a href="/" class="play-again">Play Again</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
