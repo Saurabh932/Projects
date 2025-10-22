@@ -1,0 +1,40 @@
+* {
+    font-family: monospace;
+}
+
+body {
+    margin: none;
+}
+
+.main {
+    min-height: 250px;
+    width: 350px;
+    background-color:salmon;
+    border-radius: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 100px auto;
+    transition: min-height 0.5s;
+}
+
+.room, .food, .wifi, .electricity, .persons {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    font-size: large;
+    font-weight: 600;
+    padding: 2px;
+}
+
+.btn {
+    margin: 20px auto;
+}
+
+.container {
+    margin: 10px auto;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}

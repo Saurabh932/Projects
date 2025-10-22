@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css">
+    <title>Rent Calculator</title>
+</head>
+<body>
+    <div class="main">
+        <h1>Room Rent Calculator</h1>
+
+        <form action="/expense" method="post">
+       
+            <div class="room">
+                <label for="room-rent">Room Rent</label>
+                <input type="number" name="room_rent" id="room-rent" placeholder="Enter the room rent">
+            </div>
+            
+            <div class="food">
+                <label for="food-req">Food</label>
+                <input type="number" name="food" id="food-req" placeholder="Enter the cost of food">
+            </div>
+            
+            <div class="wifi">
+                <label for="wifi-charge">Wifi</label>
+                <input type="number" name="wifi" id="wifi-charge" placeholder="Enter the charges for wifi">
+            </div>
+            
+            <div class="electricity">
+                <label for="elec">Electricity</label>
+                <input type="number" name="electricity" id="elec" placeholder="Enter the electricity consumed">
+            </div>
+
+            <div class="persons">
+                <label for="persons">No. of people</label>
+                <input type="number" name="no_person" id="persons" placeholder="Total number of persons">
+            </div>
+
+            <div class="btn">
+                <button type="submit" id="evaluate">Calculate</button>
+            </div>
+            
+            {% if result %}
+            <div class="container">
+                <h2> {{result}} </h2>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>
