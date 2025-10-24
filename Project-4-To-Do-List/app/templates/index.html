@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>To-Do List</title>
+</head>
+<body>
+    <div>
+        <h3>To-Do List</h3>
+
+        <form action="/add" method="post">
+            <input type="text" name="task" placeholder="Enter task">
+            <button type="submit">Add</button>
+        </form>
+
+        <form action="/update" method="post">
+            <input type="text" name="old_task" placeholder="Enter the task">
+            <input type="text" name="new_task" placeholder="ENter new task">
+            <button type="submit">Update</button>
+        </form>
+
+        <form action="/delete" method="post">
+            <input type="text" name="task" placeholder="Enter the task">
+            <button type="submit">Delete</button>
+        </form>
+
+        <h3>Tasks: </h3>
+        <ul>
+            {% for task in tasks %}
+                <li>{{task}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
