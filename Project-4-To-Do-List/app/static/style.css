@@ -1,0 +1,124 @@
+body {
+    font-family:sans-serif;
+    background-color: black;
+}
+
+.h1 {
+    display: flex;
+    padding: 1rem;
+    margin-left: 10rem;
+    color: white;
+}
+
+.container {
+    color: white;
+    font-family:sans-serif;
+    margin: none;
+    display: flex;
+    width: 98%;
+    height: 90vh;
+    padding: 1.75rem 0.75rem 1rem 0.75rem;
+    background-color: #2222;
+
+}
+
+.operations {
+    color: white;
+    font-family:sans-serif;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    background-color: grey;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 1rem;
+    margin-right: 2px;
+}
+
+.adding {
+    font-family:sans-serif;
+    display: flex;
+    flex-direction: column;
+    line-height: 0%;
+    padding: 1rem;  
+}
+
+.updating {
+    font-family:sans-serif;
+    display: flex;
+    flex-direction: column;
+    line-height: 0%;  
+    padding: 1rem;
+}
+
+.deleting {
+    font-family:sans-serif;
+    display: flex;
+    flex-direction: column;
+    line-height: 0%;  
+    padding: 1rem;
+}
+
+.update-head {
+    font-family:sans-serif;
+    display: flex;
+    line-height:0%;
+    padding-left: 0.5rem;
+
+}
+
+.h3 {
+    font-family:sans-serif;
+    margin-bottom: 4px;
+}
+
+.update-head {
+    font-family:sans-serif;
+  margin: 20px 0 10px 0; /* small space above and tiny below */
+  font-weight: 600;
+}
+
+
+.result {
+    font-family:sans-serif;
+    width:40%;
+    background-color: #3c3a3a;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 1rem;
+    margin-left: 2px;
+    margin-top: 0;
+    overflow: auto;
+}
+
+.input-group {
+    font-family:sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    margin-right: 6px;
+}
+
+.input-group input {
+    font-family:sans-serif;
+    width: 900%;
+    height: 1.5rem;
+    border-radius: 0.5rem;
+    padding: 4px 8px;
+    border: 2px solid black;
+}
+
+.input-group button {
+    font-family:sans-serif;
+    background-color: blueviolet;
+    width: 50px;
+    height: 2.5rem;;
+    border-radius: 1rem;
+    margin-left: 10rem;
+    right: 0;
+    padding: 6px 10px 20px ;
+}
+
+i {
+    color: white;
+    font-size: large;
+    margin: 2px;
+}

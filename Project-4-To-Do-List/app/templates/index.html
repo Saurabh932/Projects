@@ -4,34 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>To-Do List</title>
 </head>
 <body>
-    <div>
-        <h3>To-Do List</h3>
+    <div class="container">
+        <div class="operations">
+            <h1>To-Do List</h1>
 
-        <form action="/add" method="post">
-            <input type="text" name="task" placeholder="Enter task">
-            <button type="submit">Add</button>
-        </form>
+            <form action="/add" method="post" class="adding">
+                <h3>Add Tasks to list</h3>
+                <div class="input-group">
+                    <input type="text" name="task" placeholder="Enter task">
+                    <button type="submit"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </form>
 
-        <form action="/update" method="post">
-            <input type="text" name="old_task" placeholder="Enter the task">
-            <input type="text" name="new_task" placeholder="ENter new task">
-            <button type="submit">Update</button>
-        </form>
+            <form action="/update" method="post" class="updating">
+                <h3>Update your existing task</h3>
+                <h5 class="update-head">Current task</h5>
+                <div class="input-group" style="width: 580px;">
+                    <input type="text" name="old_task" placeholder="Enter the task">
+                </div>
+                <h5 class="update-head">New Task</h5>
+                <div class="input-group">
+                    <input type="text" name="new_task" placeholder="ENter new task">
+                    <button type="submit"><i class="fa-regular fa-pen-to-square"></i></button>
+                </div>
+            </form>
 
-        <form action="/delete" method="post">
-            <input type="text" name="task" placeholder="Enter the task">
-            <button type="submit">Delete</button>
-        </form>
+            <form action="/delete" method="post" class="deleting">
+                <h3> Delete the task</h3>
+                <div class="input-group">
+                    <input type="text" name="task" placeholder="Enter the task">
+                    <button type="submit"><i class="fa-regular fa-trash-can"></i></button>
+                </div>
+            </form>
+        </div>
 
-        <h3>Tasks: </h3>
-        <ul>
-            {% for task in tasks %}
-                <li>{{task}}</li>
-            {% endfor %}
-        </ul>
+        <div class="result">
+            <h1>Tasks: </h1>
+            <ul>
+                {% for task in tasks %}
+                    <li>{{task}}</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </body>
 </html>
