@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Feedback Form</title>
+</head>
+<body>
+    <div class="container">
+        <div class="form">
+            <h1 class="head">Feedback Form</h1>
+
+            <form action="/feedback" method="post">
+                <h3>Name</h3>
+                <input type="text" name="user" placeholder="Saurabh" required>
+
+                <h3>Email</h3>
+                <input type="text" name="e_mail" placeholder="Eg., xyz@gmail.com" required>
+
+                <h3>Feedback</h3>
+                <textarea name="description" placeholder="Enter your Feedback" required></textarea>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        
+        <div class="result-box">
+            {% if details %}
+            <div class="result">
+                <h2>Submitted Feedback</h2>
+                <ul>
+                    {% for item in details %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        </div>
+        
+    </div>
+</body>
+</html>
