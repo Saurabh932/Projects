@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css">
+    <title>Weather App</title>
+</head>
+<body>
+    <div class="container"> 
+        <div class="weather">
+            <form action="/weather" method="post">
+                <h1>Weather App</h1>
+
+                <input type="text" name="city" placeholder="Enter city name">
+                <button type="submit">Check Weather</button>
+            </form>
+        </div>
+        
+        <div class="result-box">
+            {% if weather %}
+            <div class="result">
+                <h1>Report</h1>
+
+                <p><strong>Temperature:</strong> {{ weather[0] }}°C</p>
+
+                <!-- ✅ Icon + Condition side by side -->
+                <div class="condition-box">
+                    <img src="https:{{ weather[2] }}" alt="Weather icon">
+                    <p><strong>{{ weather[1] }}</strong></p>
+                </div>
+
+                <p><strong>Feels like:</strong> {{ weather[3] }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
