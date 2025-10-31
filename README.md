@@ -4,8 +4,10 @@
 
 ## Project 3 - Roon Rent Calculator
 
-##  Project 4 - To-DoList
+## Project 4 - To-DoList
 
-## Projct 5 - Feedback Form
+## Project 5 - Feedback Form
 
-## Project-6 Weather App
+## Project 6 - Weather App
+
+## Project 7 - Contact Book App
