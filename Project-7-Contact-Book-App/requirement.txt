@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlmodel
+psycopg2-binary
+python-dotenv
+pydantic
+pydantic[email]
+pydantic_settings
+sqlmodel
+sqlalchemy
+fastapi[standard]
