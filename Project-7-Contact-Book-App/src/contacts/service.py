@@ -1,43 +1,86 @@
-class Contactbook:
-    def __init__(self):
-        self.contact_data = []
+"""
+Serive Layer - handles database operations for Contact
+"""
 
-    def create_contact(self, name, phone_number, email, address):
-        for contact in self.contact_data:
-            if contact["name"].lower() == name.lower():
-                return "Contact already exists."
+from sqlalchemy.ext.asyncio.session import AsyncSession
+from sqlmodel import select
+from src.contacts.models import Contact
 
-        data = {
-            "name": name,
-            "phone_number": phone_number,
-            "email": email,
-            "address": address
-        }
+class ContactService:
 
-        self.contact_data.append(data)
-        return data
+    async def create_contact(self, name:str,
+                       phone_number:int,
+                       email:str,
+                       address:str,
+                       session:AsyncSession):
+        
+        result = await session.execute(select(Contact).where(Contact.name == name))
+        existing = result.scalar_one_or_none()
+        
+        if existing:
+            return "Contact already exists."
+        
+        new_contact = Contact(
+            name=name,
+            phone_number=phone_number,
+            email=email,
+            address=address
+        )
 
-    def update_contact(self, name, phone_number, email, address):
-        for contact in self.contact_data:
-            if contact["name"].lower() == name.lower():
-                contact["phone_number"] = phone_number
-                contact["email"] = email
-                contact["address"] = address
-                return contact
-        return "Contact not found."
+        session.add(new_contact)
+        
+        await session.commit()
+        await session.refresh(new_contact)
+        
+        return new_contact
+    
 
-    def delete_contact(self, name):
-        for contact in self.contact_data:
-            if contact["name"].lower() == name.lower():
-                self.contact_data.remove(contact)
-                return "Deleted successfully"
-        return "Contact not found."
+    async def update_contact(self, name:str,
+                       phone_number:int,
+                       email:str,
+                       address:str,
+                       session:AsyncSession):
+        
+        result = await session.execute(select(Contact).where(Contact.name == name))
+        contact = result.scalar_one_or_none()
 
-    def search_contact(self, name):
-        for contact in self.contact_data:
-            if contact["name"].lower() == name.lower():
-                return contact
-        return "Contact not found."
+        if not contact:
+            return "Contact not found."
 
-    def view_contact(self):
-        return self.contact_data
+        contact.phone_number = phone_number
+        contact.email = email
+        contact.address = address
+
+        await session.commit()
+        await session.refresh(contact)
+        return contact
+
+
+    async def delete_contact(self, 
+                             name: str, 
+                             session: AsyncSession):
+        
+        result = await session.execute(select(Contact).where(Contact.name == name))
+        contact = result.scalar_one_or_none()
+
+        if not contact:
+            return "Contact not found."
+
+        await session.delete(contact)
+        await session.commit()
+        return "Deleted successfully."
+    
+
+    async def search_contact(self, 
+                             name: str, 
+                             session: AsyncSession):
+        
+        result = await session.execute(select(Contact).where(Contact.name.ilike(f"%{name}%")))
+        found = result.scalars().all()
+        return found if found else "Contact not found."
+
+
+    async def view_contact(self, session: AsyncSession):
+        result = await session.execute(select(Contact))
+        return result.scalars().all()
+

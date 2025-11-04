@@ -4,6 +4,7 @@ Each class here represents a table in the database.
 """
 
 import uuid
+from sqlalchemy import BigInteger
 from datetime import datetime
 from sqlmodel import SQLModel, Field
 

@@ -6,6 +6,7 @@ python-dotenv
 pydantic
 pydantic[email]
 pydantic_settings
+asyncpg
 sqlmodel
 sqlalchemy
 fastapi[standard]

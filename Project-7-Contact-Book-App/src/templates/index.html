@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Book</title>
+    <title>📖 Contact Book</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,11 +11,17 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
     <div class="container py-5">
-        <h1 class="text-center mb-4">📖 Contact Book</h1>
+        <h1 class="text-center mb-4">📞 Contact Book</h1>
 
-        <!-- Add Contact -->
+        <!-- ✅ SUCCESS OR STATUS MESSAGE -->
+        {% if message %}
+        <div class="alert alert-success text-center">{{ message }}</div>
+        {% endif %}
+
+        <!-- ➕ ADD CONTACT -->
         <div class="card shadow mb-4">
             <div class="card-body">
                 <h3 class="card-title mb-3">Add Contact</h3>
@@ -39,7 +45,7 @@
             </div>
         </div>
 
-        <!-- Update Contact -->
+        <!-- ✏️ UPDATE CONTACT -->
         <div class="card shadow mb-4">
             <div class="card-body">
                 <h3 class="card-title mb-3">Update Contact</h3>
@@ -63,7 +69,7 @@
             </div>
         </div>
 
-        <!-- Delete Contact -->
+        <!-- ❌ DELETE CONTACT -->
         <div class="card shadow mb-4">
             <div class="card-body">
                 <h3 class="card-title mb-3 text-danger">Delete Contact</h3>
@@ -78,7 +84,7 @@
             </div>
         </div>
 
-        <!-- Search Contact -->
+        <!-- 🔍 SEARCH CONTACT -->
         <div class="card shadow mb-4">
             <div class="card-body">
                 <h3 class="card-title mb-3">Search Contact</h3>
@@ -93,28 +99,27 @@
             </div>
         </div>
 
-        <!-- Search Result -->
+        <!-- 🔍 SEARCH RESULTS -->
         {% if search_result %}
-            <div class="alert alert-info mt-3">
-                {% if search_result is string %}
-                    <p><b>{{ search_result }}</b></p>
-                {% else %}
-                    <h4>Search Result:</h4>
-                    <ul>
-                        <li><b>Name:</b> {{ search_result.name }}</li>
-                        <li><b>Phone:</b> {{ search_result.phone_number }}</li>
-                        <li><b>Email:</b> {{ search_result.email }}</li>
-                        <li><b>Address:</b> {{ search_result.address }}</li>
-                    </ul>
-                {% endif %}
-            </div>
+        <div class="alert alert-info mt-3">
+            {% if search_result is string %}
+                <p><b>{{ search_result }}</b></p>
+            {% else %}
+                <h4>Search Results:</h4>
+                <ul>
+                    {% for r in search_result %}
+                        <li><b>{{ r.name }}</b> — {{ r.phone_number }} — {{ r.email }} — {{ r.address }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
         {% endif %}
 
-        <!-- All Contacts -->
+        <!-- 📋 ALL CONTACTS -->
         <div class="card shadow">
             <div class="card-body">
                 <h3 class="card-title mb-3">All Contacts</h3>
-                {% if contact_data %}
+                {% if contacts %}
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -125,7 +130,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for c in contact_data %}
+                            {% for c in contacts %}
                                 <tr>
                                     <td>{{ c.name }}</td>
                                     <td>{{ c.phone_number }}</td>
@@ -143,7 +148,7 @@
     </div>
 
     <footer class="text-center py-3 mt-4">
-        <p>Made by Saurabh</p>
+        <p>Made by Saurabh ❤️</p>
     </footer>
 </body>
 </html>
