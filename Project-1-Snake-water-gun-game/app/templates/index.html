@@ -12,7 +12,8 @@
         <h3>Let's Play!</h3>
 
         <!-- Game form -->
-        <form action="/play" method="POST" class="game-form">
+        <!-- <form action="/play" method="POST" id="game-form"> -->
+        <form id="game-form">
             <label for="game">Choose your move:</label>
             <select name="game" id="game">
                 <option value="snake">Snake</option>
@@ -22,6 +23,8 @@
 
             <button type="submit">Shoot!</button>
         </form>
+
+        <div class="result-box" id="result-box"></div>
 
         <ul>
 
