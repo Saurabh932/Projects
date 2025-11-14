@@ -1,6 +1,12 @@
+from sqlmodel import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from .model import Student
+from .schema import StudentCreateModel, StudentUpdateModel
+
 class Grade:
-    def __init__(self):
-        self.record = []  # list of dicts
+    '''
+        Computing Grades
+    '''
 
     def _compute_grade(self, total_marks: int, total_sub: int):
         # validate inputs
@@ -21,67 +27,108 @@ class Grade:
         else:
             grade = "F"
 
-        return {"average": round(average, 2), "grade": grade}
-
-    def create(self, name: str, total_marks: int, total_sub: int):
+        return round(average, 2), grade
+    
+    
+    
+    '''
+        Creating new student and calcuating average and grades.
+    '''
+    async def create(self,
+               student_data : StudentCreateModel,
+               session : AsyncSession):
+        
         # avoid duplicates by name (case-insensitive)
-        if any(s["name"].lower() == name.lower() for s in self.record):
-            return {"error": "Student already exists."}
-
-        grades = self._compute_grade(total_marks, total_sub)
-        rec = {
-            "name": name,
-            "total_marks": total_marks,
-            "total_sub": total_sub,
-            **grades
+        query = select(Student).where(Student.name.ilike(student_data.name))
+        result = await session.execute(query)
+        exisitng = result.first()
+        
+        if exisitng:
+            return {"error": "Student with this name already exists."}
+        
+        average, grades = self._compute_grade(student_data.total_marks, student_data.total_sub)
+        
+        new_student = Student{
+            "name": student_data.name,
+            "total_marks": student_data.total_marks,
+            "total_sub": student_data.total_sub,
+            "average": average,
+            "grades": grades
         }
-        self.record.append(rec)
-        return rec
+        
+        session.add(new_student)
+        await session.commit()
+        await session.refresh(new_student)
+        return new_student
+    
+    
+    
+    """
+        Fetching/Searching student by name
+    """
+    async def get_student_by_name(self, name : str, session : AsyncSession):
+        query = select(Student).where(Student.name.ilike(name))
+        result = await session.execute(query)
+        return result.first()
+    
+    
 
-    def update(self, name: str, total_marks: int | None = None, total_sub: int | None = None):
-        for student in self.record:
-            if student["name"].lower() == name.lower():
-                # update only provided fields
-                if total_marks is not None:
-                    if total_marks < 0:
-                        return {"error": "total_marks must be >= 0"}
-                    student["total_marks"] = total_marks
-                if total_sub is not None:
-                    if total_sub <= 0:
-                        return {"error": "total_sub must be > 0"}
-                    student["total_sub"] = total_sub
+    """
+        Updating the existing student details
+    """
+    async def update(self,
+               name : str,
+               student_data : StudentUpdateModel,
+               session : AsyncSession):
+        
+        student = await self.get_student_by_name(name, session)
+        if not student:
+            return {"error": "Student not found"}
 
-                # recompute grade using current values
-                student.update(self._compute_grade(student["total_marks"], student["total_sub"]))
-                return student
+        # Updating only provided field
+        if student_data.name is not None:
+            student.name = student_data.name
+            
+        if student_data.total_marks is not None:
+            if student_data.total_marks < 0:
+                return {"error":"Total marks mush be positive"}
+            student.total_marks = student_data.total_marks
+            
+        if student_data.total_sub is not None:
+            if student_data.total_sub < 0:
+                return {"error":"total subject must be greater than 0"}
+            student.total_sub = student_data.total_sub
 
-        return {"error": "Student not found."}
-
-    def delete(self, name: str):
-        for student in self.record:
-            if student["name"].lower() == name.lower():
-                self.record.remove(student)
-                return {"message": "Deleted successfully."}
-        return {"error": "Student not found."}
-
-    def search(self, name: str):
-        for student in self.record:
-            if student["name"].lower() == name.lower():
-                return student
-        return {"error": "Student not found."}
-
-    def view(self):
-        # if not self.record:
-        #     return []
-        return list(self.record)  # return a copy to avoid external modification
+        # recompute grade using current values
+        average, grades = self._compute_grade(student.total_marks student.total_sub)
+        student.average = average
+        student.grades = grades
+        
+        session.add(student)
+        await session.commit()
+        await session.refresh(student)
+        return student
 
 
-# Example usage
-# if __name__ == "__main__":
-#     g = Grade()
-#     print(g.create("Saurabh", 450, 5))
-#     print(g.create("Ravi", 300, 5))
-#     print(g.update("Ravi", total_marks=380, total_sub=5))
-#     print(g.search("Saurabh"))
-#     print(g.delete("Ravi"))
-#     print(g.view())
+    
+    """
+        Deleting Student details
+    """
+    async def delete(self, name: str, session:AsyncSession):
+        student = await self.get_student_by_name(name, session)
+        
+        if not student:
+            return {"error":"Student not found"}
+        
+        await session.delete(student)
+        await session.commit()
+        return {"message": f"Student '{name}' deleted successfully."}
+
+
+    """
+        Viewing all details
+    """
+    async def view(self, session:AsyncSession):
+        query = select(Student)
+        result = await session.execute(query)
+        return result
