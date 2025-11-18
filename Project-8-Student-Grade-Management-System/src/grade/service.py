@@ -34,27 +34,25 @@ class Grade:
     '''
         Creating new student and calcuating average and grades.
     '''
-    async def create(self,
-               student_data : StudentCreateModel,
-               session : AsyncSession):
+    async def create(self, student_data : StudentCreateModel, session : AsyncSession):
         
         # avoid duplicates by name (case-insensitive)
         query = select(Student).where(Student.name.ilike(student_data.name))
         result = await session.execute(query)
-        exisitng = result.first()
+        exisitng = result.scalar_one_or_none()
         
         if exisitng:
             return {"error": "Student with this name already exists."}
         
-        average, grades = self._compute_grade(student_data.total_marks, student_data.total_sub)
+        average, grade = self._compute_grade(student_data.total_marks, student_data.total_sub)
         
-        new_student = Student{
-            "name": student_data.name,
-            "total_marks": student_data.total_marks,
-            "total_sub": student_data.total_sub,
-            "average": average,
-            "grades": grades
-        }
+        student_dict = student_data.model_dump()
+        
+        student_dict['average'] = average
+        student_dict['grade'] = grade
+        
+        new_student = Student(**student_dict)
+
         
         session.add(new_student)
         await session.commit()
@@ -69,7 +67,7 @@ class Grade:
     async def get_student_by_name(self, name : str, session : AsyncSession):
         query = select(Student).where(Student.name.ilike(name))
         result = await session.execute(query)
-        return result.first()
+        return result.scalar_one_or_none()
     
     
 
@@ -100,9 +98,9 @@ class Grade:
             student.total_sub = student_data.total_sub
 
         # recompute grade using current values
-        average, grades = self._compute_grade(student.total_marks student.total_sub)
+        average, grade = self._compute_grade(student.total_marks, student.total_sub)
         student.average = average
-        student.grades = grades
+        student.grade = grade
         
         session.add(student)
         await session.commit()
@@ -131,4 +129,4 @@ class Grade:
     async def view(self, session:AsyncSession):
         query = select(Student)
         result = await session.execute(query)
-        return result
+        return result.scalars().all()

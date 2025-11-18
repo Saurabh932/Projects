@@ -1,54 +1,75 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request, Form, Depends, HTTPException, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from .service import Grade
+from src.db.db import get_session
+from schema import StudentRead, StudentCreateModel, StudentUpdateModel
 
 router = APIRouter()
 grade = Grade()
 template = Jinja2Templates(directory="src/templates")
 
-@router.get("/", response_class=HTMLResponse)
-def home(request:Request):
-    return template.TemplateResponse("index.html", {"request":request, "grade":grade.view()})
+
+'''
+    HOME PAGE
+'''
+@router.get("/", response_model=list[StudentRead])
+async def home(session : AsyncSession = Depends(get_session)):
+    students = await grade.view(session)
+    return students
 
 
-@router.post("/add", response_class=HTMLResponse)
-def create(request:Request,
-           name : str = Form(...),
-           total_marks : int = Form(...),
-           total_sub : int = Form(...)):
+'''
+    Creating / Adding Student
+'''
+@router.post("/add", status_code=status.HTTP_200_OK, response_model=StudentRead)
+async def create(request:Request, student_data : StudentCreateModel, session : AsyncSession = Depends(get_session)):
     
-    creating = grade.create(name, total_marks, total_sub)
-    success_msg = f"Student with {name} created!"
+    creating = await grade.create(student_data, session)
     
-    return template.TemplateResponse("index.html", {"request":request, "grade":grade.view(), "message":success_msg})
+    if "error" in creating:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=creating['error'])
+
+    return creating
 
 
-@router.post("/search", response_class=HTMLResponse)
-def search(request: Request, name : str = Form(...)):
-    found = grade.search(name)
-    return template.TemplateResponse("index.html", {"request":request, "search_result":found, "grade":grade.view})
-
-
-@router.post("/update", response_class=HTMLResponse)
-def update(request : Request,
-           name : str = Form(...),
-           total_marks : int = Form(...), 
-           total_sub : int = Form(...)):
+'''
+    Searching Student
+'''
+@router.post("/{name}", response_model=StudentRead)
+async def search(name : str, session : AsyncSession = Depends(get_session)):
+    found = await grade.get_student_by_name(name, session)
     
-    updated = grade.update(name, total_marks, total_sub)
-    success_msg = f"Grade {name} updated successfully."
+    if not found:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student not found")
     
-    return template.TemplateResponse("index.html", {"request":request, "update_grade":updated, "grade":grade.view(), "message":success_msg})
+    return found
 
 
-@router.post("/delete", response_class=HTMLResponse)
-def delete(request : Request, 
-           name : str = Form(...)):
-    result = grade.delete(name)
-    if isinstance(result, dict) and "error" in result:
-        success_msg = result["error"]
-    else:
-        success_msg = f"Student {name} deleted successfully."
+'''
+    Updating Student
+'''
+@router.post("/{name}", response_model=StudentRead)
+async def update(name : str, student_data : StudentUpdateModel, session : get_session):
     
-    return template.TemplateResponse("index.html", {"request": request, "grade":grade.view(), "message":success_msg})
+    updated = await grade.update(name, student_data, session)
+    
+    if "error" in updated:
+        raise HTTPException(status_code=404, detail=updated["error"])
+
+    return updated
+
+
+'''
+    Deleting Student
+'''
+@router.post("/delete", response_model=StudentRead)
+async def delete(name : str, session : AsyncSession = Depends(get_session)):
+    
+    result = await grade.delete(name, session)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    
+    return None
