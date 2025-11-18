@@ -3,7 +3,7 @@ def calculator(input1, input2, operand):
         return input1+input2
     
     elif operand == "-":
-        return input1+input2
+        return input1-input2
     
     elif operand == "*":
         return input1*input2

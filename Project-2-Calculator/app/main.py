@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Annotated
 from .core.app import calculator
+from .core.schema import Calculation
 
 app = FastAPI()
 
@@ -17,14 +18,9 @@ def home(request: Request):
     return templates.TemplateResponse("index.html", {'request':request})
     
 
-@app.post("/calculate", response_class=HTMLResponse)
-def calculation(
-                request: Request,
-                input1: int = Form(...),
-                input2: int = Form(...),
-                operand: str = Form(...)
-            ):
+@app.post("/api/calculate")
+async def calculation(data : Calculation):
     
-    result = calculator(input1, input2, operand)
+    result = calculator(data.input1, data.input2, data.operator)
     # return f'result : {result}'
-    return templates.TemplateResponse("index.html", {"request": request, "result": result})
+    return JSONResponse(content={"result":result})

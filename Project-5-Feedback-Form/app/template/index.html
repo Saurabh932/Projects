@@ -8,36 +8,34 @@
 </head>
 <body>
     <div class="container">
+
         <div class="form">
             <h1 class="head">Feedback Form</h1>
 
-            <form action="/feedback" method="post">
+            <form id="feedback-form">
+
                 <h3>Name</h3>
-                <input type="text" name="user" placeholder="Saurabh" required>
+                <input type="text" id="name" required>
 
                 <h3>Email</h3>
-                <input type="text" name="e_mail" placeholder="Eg., xyz@gmail.com" required>
+                <input type="text" id="email" required>
 
                 <h3>Feedback</h3>
-                <textarea name="description" placeholder="Enter your Feedback" required></textarea>
+                <textarea id="des" required></textarea>
 
                 <button type="submit">Submit</button>
             </form>
         </div>
-        
+
         <div class="result-box">
-            {% if details %}
             <div class="result">
                 <h2>Submitted Feedback</h2>
-                <ul>
-                    {% for item in details %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
+                <ul class="feed-list"></ul>
             </div>
-        {% endif %}
         </div>
-        
+
     </div>
+
+    <script src="/static/app.js"></script>
 </body>
 </html>
