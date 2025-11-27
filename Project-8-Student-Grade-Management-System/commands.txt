@@ -1,0 +1,7 @@
+"""
+    To create JWT token
+"""
+
+1. first open python terminal
+2. import secrets
+3. secrets.token_hex(16)

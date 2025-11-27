@@ -11,11 +11,11 @@ class StudentRead(BaseModel):
     average : float
     grade : str
     created_at : datetime
-    updated_at : Optional[datetime]
+    updated_at : Optional[datetime] = None
     
 
 class StudentCreateModel(BaseModel):
-    name: str
+    name: str   
     total_marks : int
     total_sub : int
     

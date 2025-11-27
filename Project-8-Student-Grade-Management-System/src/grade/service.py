@@ -74,38 +74,35 @@ class Grade:
     """
         Updating the existing student details
     """
-    async def update(self,
-               name : str,
-               student_data : StudentUpdateModel,
-               session : AsyncSession):
-        
-        student = await self.get_student_by_name(name, session)
-        if not student:
-            return {"error": "Student not found"}
+    async def update(self, name: str, student_data: StudentUpdateModel, session: AsyncSession):
 
-        # Updating only provided field
-        if student_data.name is not None:
-            student.name = student_data.name
-            
-        if student_data.total_marks is not None:
-            if student_data.total_marks < 0:
-                return {"error":"Total marks mush be positive"}
-            student.total_marks = student_data.total_marks
-            
-        if student_data.total_sub is not None:
-            if student_data.total_sub < 0:
-                return {"error":"total subject must be greater than 0"}
-            student.total_sub = student_data.total_sub
+        try:
+            student = await self.get_student_by_name(name, session)
+            if not student:
+                return {"error": "Student not found"}
 
-        # recompute grade using current values
-        average, grade = self._compute_grade(student.total_marks, student.total_sub)
-        student.average = average
-        student.grade = grade
-        
-        session.add(student)
-        await session.commit()
-        await session.refresh(student)
-        return student
+            if student_data.name is not None:
+                student.name = student_data.name
+
+            if student_data.total_marks is not None:
+                student.total_marks = student_data.total_marks
+
+            if student_data.total_sub is not None:
+                student.total_sub = student_data.total_sub
+
+            average, grade = self._compute_grade(student.total_marks, student.total_sub)
+            student.average = average
+            student.grade = grade
+
+            session.add(student)
+            await session.commit()
+            await session.refresh(student)
+            return student
+
+        except Exception as e:
+            print("🔥 ERROR DURING UPDATE:", e)
+            raise e
+
 
 
     

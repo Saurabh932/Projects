@@ -5,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .service import Grade
 from src.db.db import get_session
-from schema import StudentRead, StudentCreateModel, StudentUpdateModel
+from .schema import StudentRead, StudentCreateModel, StudentUpdateModel
+
 
 router = APIRouter()
 grade = Grade()
@@ -38,7 +39,7 @@ async def create(request:Request, student_data : StudentCreateModel, session : A
 '''
     Searching Student
 '''
-@router.post("/{name}", response_model=StudentRead)
+@router.post("/search/{name}", response_model=StudentRead)
 async def search(name : str, session : AsyncSession = Depends(get_session)):
     found = await grade.get_student_by_name(name, session)
     
@@ -51,8 +52,8 @@ async def search(name : str, session : AsyncSession = Depends(get_session)):
 '''
     Updating Student
 '''
-@router.post("/{name}", response_model=StudentRead)
-async def update(name : str, student_data : StudentUpdateModel, session : get_session):
+@router.post("/update/{name}", response_model=StudentRead)
+async def update(name: str, student_data: StudentUpdateModel, session: AsyncSession = Depends(get_session)):
     
     updated = await grade.update(name, student_data, session)
     
@@ -65,7 +66,7 @@ async def update(name : str, student_data : StudentUpdateModel, session : get_se
 '''
     Deleting Student
 '''
-@router.post("/delete", response_model=StudentRead)
+@router.post("/delete/{name}", response_model=StudentRead)
 async def delete(name : str, session : AsyncSession = Depends(get_session)):
     
     result = await grade.delete(name, session)

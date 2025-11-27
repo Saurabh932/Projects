@@ -10,3 +10,4 @@ asyncpg
 sqlmodel
 sqlalchemy
 fastapi[standard]
+jwt

@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+
 from .db.db import init_db
 from .grade.routes import router
+from .auth.routes import auth_router
 
 
 # Definig lifespan (startup + shutdown event)
@@ -21,3 +23,4 @@ app = FastAPI(
 )
 
 app.include_router(router)
+app.include_router(auth_router)

@@ -1,22 +1,24 @@
 import uuid
 from sqlmodel import Column, SQLModel, Field
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.mysql import CHAR
+
 from typing import Optional
 from datetime import datetime
 
 class Student(SQLModel, table=True):
     __tablename__="student"
-    uid : uuid.UUID = Field(
+    uid : Optional[uuid.UUID] = Field(
         default_factory=uuid.uuid4,
-        sa_column=Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+        sa_column=Column(CHAR(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     )
     name : str
     total_marks : int
     total_sub : int
     average : float = 0.0
     grade : str = "F"
-    created_at : datetime = Field(default_factory=datetime.now())
-    update_at : Optional[datetime] = Field(default_factory=datetime.now())
+    created_at : datetime = Field(default_factory=datetime.now)
+    updated_at : Optional[datetime] = Field(default_factory=datetime.now)
     
     
     # def calculate_grade(self):
