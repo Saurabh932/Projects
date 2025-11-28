@@ -1,9 +1,14 @@
+from typing import Optional
+from datetime import datetime
+import uuid
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from .model import Student
 from .schema import StudentCreateModel, StudentUpdateModel
 
-class Grade:
+
+class StudentService:
     '''
         Computing Grades
     '''
@@ -34,7 +39,7 @@ class Grade:
     '''
         Creating new student and calcuating average and grades.
     '''
-    async def create(self, student_data : StudentCreateModel, session : AsyncSession):
+    async def create(self, student_data : StudentCreateModel, session : AsyncSession) -> Student:
         
         # avoid duplicates by name (case-insensitive)
         query = select(Student).where(Student.name.ilike(student_data.name))
@@ -64,20 +69,31 @@ class Grade:
     """
         Fetching/Searching student by name
     """
-    async def get_student_by_name(self, name : str, session : AsyncSession):
+    async def get_student_by_name(self, name : str, session : AsyncSession) -> Optional[Student]:
         query = select(Student).where(Student.name.ilike(name))
         result = await session.execute(query)
         return result.scalar_one_or_none()
+    
+    
+    async def get_student_by_id(self, student_uid : uuid.UUID, session : AsyncSession) -> Optional[Student]:
+        query = select(Student).where(Student.uid == student_uid)
+        result = await session.execute(query)
+        return result.scalar_one_or_none()
+    
+    
+    async def list_students(self, session: AsyncSession) -> list[Student]:
+        query = select(Student)
+        result = await session.execute(query)
+        return result.all()
     
     
 
     """
         Updating the existing student details
     """
-    async def update(self, name: str, student_data: StudentUpdateModel, session: AsyncSession):
-
+    async def update(self, student_uid: uuid.UUID, student_data: StudentUpdateModel, session: AsyncSession) -> Optional[Student]:
         try:
-            student = await self.get_student_by_name(name, session)
+            student = await self.get_student_by_id(student_uid, session)
             if not student:
                 return {"error": "Student not found"}
 
@@ -90,6 +106,7 @@ class Grade:
             if student_data.total_sub is not None:
                 student.total_sub = student_data.total_sub
 
+            ''' Recomputing the grade if nessecary  '''
             average, grade = self._compute_grade(student.total_marks, student.total_sub)
             student.average = average
             student.grade = grade
@@ -104,16 +121,17 @@ class Grade:
             raise e
 
 
-
     
     """
         Deleting Student details
     """
-    async def delete(self, name: str, session:AsyncSession):
-        student = await self.get_student_by_name(name, session)
+    async def delete(self, student_uid: uuid.UUID, session:AsyncSession):
+        student = await self.get_student_by_id(student_uid, session)
         
         if not student:
             return {"error":"Student not found"}
+        
+        name = student.name
         
         await session.delete(student)
         await session.commit()

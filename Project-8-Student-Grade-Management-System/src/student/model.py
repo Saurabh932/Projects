@@ -7,18 +7,15 @@ from typing import Optional
 from datetime import datetime
 
 class Student(SQLModel, table=True):
-    __tablename__="student"
-    uid : Optional[uuid.UUID] = Field(
-        default_factory=uuid.uuid4,
-        sa_column=Column(CHAR(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    )
+    # __tablename__="student"
+    uid : uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     name : str
-    total_marks : int
-    total_sub : int
-    average : float = 0.0
-    grade : str = "F"
-    created_at : datetime = Field(default_factory=datetime.now)
-    updated_at : Optional[datetime] = Field(default_factory=datetime.now)
+    total_marks : int = Field(ge=0)
+    total_sub : int = Field(ge=1)
+    average : float | None = None
+    grade : str | None = Field(default=None, max_length=2)
+    created_at : datetime = Field(default_factory=datetime.now, nullable=False)
+    updated_at : datetime | None = None
     
     
     # def calculate_grade(self):

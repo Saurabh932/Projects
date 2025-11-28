@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from .db.db import init_db
-from .grade.routes import router
+from .student.routes import router
 from .auth.routes import auth_router
 
 
