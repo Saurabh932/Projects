@@ -23,6 +23,24 @@ class UserService:
         return new_user
     
     
+    
+    """
+        Admin creation
+    """
+    async def create_admin(self, email: str, password_hash: str, session: AsyncSession):
+        new_admin = User(
+            email=email,
+            password_hash=password_hash,
+            role="admin",
+            is_verified=True
+        )
+        session.add(new_admin)
+        await session.commit()
+        await session.refresh(new_admin)
+        return new_admin
+
+    
+    
     """
         Getting email by user
     """

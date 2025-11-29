@@ -1,0 +1,32 @@
+import uuid
+from typing import Optional, List
+from pydantic import BaseModel
+
+
+class SubjectCreation(BaseModel):
+    subject_name: str
+    marks_obtain: int
+    max_marks: int = 100
+    teacher_name: Optional[str] = None
+
+
+class SubjectResponse(BaseModel):
+    uid: uuid.UUID
+    subject_name: str
+    marks_obtain: int
+    max_marks: int = 100
+    teacher_name: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class StudentGradeResponse(BaseModel):
+    uid: uuid.UUID
+    name: str
+    average: Optional[float] = None
+    grade: Optional[str] = None
+    subjects: List[SubjectResponse] = []
+
+    class Config:
+        from_attributes = True

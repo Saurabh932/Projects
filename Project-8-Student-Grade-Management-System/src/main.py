@@ -1,17 +1,41 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from .db.db import init_db
-from .student.routes import router
-from .auth.routes import auth_router
+from src.db.db import init_db, get_session
+from src.student.routes import router
+from src.auth.routes import auth_router
+from src.grade.routes import grade_router
+from src.auth.service import UserService
+from src.auth.utils import get_hash_password
+from src.config.config import config
+
+user_service = UserService()
 
 
-# Definig lifespan (startup + shutdown event)
 @asynccontextmanager
-async def lifespan(app : FastAPI):
+async def lifespan(app: FastAPI):
     print("🚀 Starting Student Grade Management System...")
-    await init_db()     # It creates table if they don't exists
+    await init_db()
+
+    # Auto-create Admin if not exists
+    async for session in get_session():
+        admin = await user_service.get_user_by_email(config.ADMIN_EMAIL, session)
+        if admin:
+            break
+
+        password_hash = get_hash_password(config.ADMIN_PASSWORD)
+
+        await user_service.create_admin(
+            email=config.ADMIN_EMAIL,
+            password_hash=password_hash,
+            session=session
+        )
+
+        print(f"👑 Admin auto-created: {config.ADMIN_EMAIL}")
+        break
+
     yield
+
     print("🛑 Shutting down Student Grade Management System...")
 
 
@@ -24,3 +48,4 @@ app = FastAPI(
 
 app.include_router(router)
 app.include_router(auth_router)
+app.include_router(grade_router)

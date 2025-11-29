@@ -8,6 +8,8 @@ class Setting(BaseSettings):
     DATABASE_URL : str
     JWT_SECRET : str
     JWT_ALGORITHM : str
+    ADMIN_EMAIL: str
+    ADMIN_PASSWORD: str
     
     model_config = SettingsConfigDict(
         env_file="src/.env",

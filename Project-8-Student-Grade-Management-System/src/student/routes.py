@@ -1,7 +1,4 @@
-from typing import List
-
 from uuid import UUID
-import uuid
 from fastapi import APIRouter, Request, Depends, HTTPException, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -10,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .service import StudentService
 from src.db.db import get_session
 from .schema import StudentResponseModel, StudentCreateModel, StudentUpdateModel
+
 from src.auth.dependencies import TokenBearer, RoleCheck
 
 router = APIRouter(prefix="/students", tags=['students'])
