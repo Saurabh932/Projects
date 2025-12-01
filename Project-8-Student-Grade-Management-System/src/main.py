@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
+from fastapi.staticfiles import StaticFiles
+
 from src.db.db import init_db, get_session
 from src.student.routes import router
 from src.auth.routes import auth_router
@@ -49,3 +51,6 @@ app = FastAPI(
 app.include_router(router)
 app.include_router(auth_router)
 app.include_router(grade_router)
+
+
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
