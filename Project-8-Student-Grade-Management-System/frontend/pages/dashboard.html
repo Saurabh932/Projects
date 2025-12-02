@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Grade Management</title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <section class="navbar">
+        <div class="logo">Grade Management</div>
+        <div class="nav-right">
+            <span id="user-email"></span>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+    </section>
+
+    <!-- Student Table Section -->
+    <section class="section">
+        <div class="container">
+            <h2>Student Records</h2>
+
+            <button class="btn btn-success" onclick="openAddStudentModal()">+ Add Student</button>
+
+            <table class="table" id="studentsTable">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Average</th>
+                    <th>Grade</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="studentsTableBody">
+                    <!-- Data Loads Here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <h3>Add New Student</h3>
+
+            <label>Name</label>
+            <input type="text" id="studentName" placeholder="Enter student name" required>
+
+            <label>Total Marks (initially)</label>
+            <input type="number" id="totalMarks" placeholder="e.g. 250" required>
+
+            <label>Total Subjects</label>
+            <input type="number" id="totalSubs" placeholder="e.g. 5" required>
+
+            <div class="modal-actions">
+                <button onclick="addStudent()" class="btn btn-primary">Save</button>
+                <button onclick="closeAddStudentModal()" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+
+</body>
+</html>

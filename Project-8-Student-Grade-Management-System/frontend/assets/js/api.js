@@ -8,4 +8,4 @@ async function apiCall(url, method, data, token = null){
     const response = await fetch(`${API_BASE_URL}${url}`, {method, headers, body: data ? JSON.stringify(data):null});
     
     return response.json()
-};
+}; 

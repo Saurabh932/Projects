@@ -45,7 +45,8 @@
 // If already logged in -> go to dashboard
 const existingToken = localStorage.getItem("access_token");
 if (existingToken) {
-    window.location.href = "/dashboard.html";
+    window.location.href = "/pages/dashboard.html";
+    // return;
 }
 
 // If new user
@@ -61,24 +62,24 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const response = await fetch("/auth/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: email, password: password })
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                alert(data.detail || "Login Failed!");
+                alert(data.detail || "Login failed!");
                 return;
             }
 
-            // Storing JWT + user data in localStorage
             localStorage.setItem("access_token", data.access_token);
             localStorage.setItem("user_role", data.user.role);
             localStorage.setItem("user_email", data.user.email);
 
-            // Navigate to dashboard after successful login
-            window.location.href = "/dashboard.html";
+            window.location.href = "/pages/dashboard.html";
 
         } catch (error) {
             console.error("Login error:", error);

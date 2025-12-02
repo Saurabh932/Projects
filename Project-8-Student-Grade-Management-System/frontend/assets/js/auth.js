@@ -1,6 +1,6 @@
 function logout(){
     localStorage.clear();
-    window.location.herf="/";
+    window.location.href="/";
 }
 
 function getToken(){
