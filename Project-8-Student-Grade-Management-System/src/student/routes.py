@@ -1,11 +1,14 @@
 from uuid import UUID
+from typing import Optional
+from fastapi import Query
 from fastapi import APIRouter, Request, Depends, HTTPException, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
 
 from .service import StudentService
-from src.db.db import get_session
+from src.db.db import get_session, Student
 from .schema import StudentResponseModel, StudentCreateModel, StudentUpdateModel
 
 from src.auth.dependencies import TokenBearer, RoleCheck
@@ -19,13 +22,39 @@ template = Jinja2Templates(directory="src/templates")
 
 
 '''
-    HOME PAGE and List all students
+HOME PAGE
 '''
-@router.get("/", response_model=list[StudentResponseModel], dependencies=[Depends(read_role)])
-async def home(session : AsyncSession = Depends(get_session), 
-               token_details: dict =  Depends(access_token_bearer)):
-    students = await student_service.view(session)
-    return students
+# @router.get("/", response_model=list[StudentResponseModel], dependencies=[Depends(read_role)])
+# async def home(session : AsyncSession = Depends(get_session), 
+#                token_details: dict =  Depends(access_token_bearer)):
+#     students = await student_service.view(session)
+#     return students
+
+
+"""
+    HOME PAGE and List all students with Search + Pagination + Sort + API + UI Integration
+"""
+@router.get("/", response_model=list[StudentResponseModel])
+async def get_students(search: Optional[str] = Query(None), sort: Optional[str] = Query("name"),
+                       order: Optional[str] = Query("asc"), limit: int = Query(10, ge = 1),
+                       offset: int = Query(0, ge = 0), session: AsyncSession = Depends(get_session),
+                       token_details: dict = Depends(access_token_bearer)):
+       
+        query = select(Student)
+       
+        if search:
+            query = query.where(Student.name.ilike(f"%{search}%"))
+        
+        if sort in ["name", "average", "grade"]:
+            column = getattr(Student, sort)
+            query = query.order_by(column.desc() if order == "desc" else column.asc())
+
+        query = query.limit(limit).offset(offset)
+
+        result = await session.execute(query)
+        students = result.scalars().all()
+
+        return students
 
 
 '''

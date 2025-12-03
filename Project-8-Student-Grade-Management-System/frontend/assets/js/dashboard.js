@@ -23,14 +23,26 @@ document.getElementById("user-email").innerText =
 // ===============================
 // Fetch All Students
 // ===============================
+let search = "";
+let sort = "name";
+let order = "asc";
+let limit = 10;
+let offset = 0;
+
+function applyFilters() {
+    search = document.getElementById("searchBox").value.trim();
+    sort = document.getElementById("sortSelect").value;
+    order = document.getElementById("orderSelect").value;
+    offset = 0; // Reset pagination for new filter
+    fetchStudents();
+}
+
 async function fetchStudents() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/students/", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const url =
+      `http://127.0.0.1:8000/students/?search=${search}&sort=${sort}&order=${order}&limit=${limit}&offset=${offset}`;
+
+    const response = await fetch(url, { headers: getAuthHeaders() });
 
     if (!response.ok) {
       throw new Error("Failed to fetch students");
@@ -43,7 +55,23 @@ async function fetchStudents() {
     console.error("Error:", err);
     alert("Error fetching students!");
   }
+}
 
+
+
+
+// ===============================
+// Pagination
+// ===============================
+function nextPage(){
+    offset += limit;
+    fetchStudents();
+}
+
+function prevPage() {
+    if (offset === 0) return;
+    offset -= limit;
+    fetchStudents();
 }
 
 
