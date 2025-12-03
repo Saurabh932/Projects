@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details | Grade Management</title>
+    <link rel="stylesheet" href="../assets/css/student.css">
+</head>
+<body>
+    <section class="nav-bar">
+        <div class="logo"><h1>Student Details</h1></div>
+        <button onclick="goBack()" class="logout-btn">Back</button>
+    </section>
+
+    <section class="section container">
+        <div class="card">
+            <h2 id="studentName"></h2>
+            <p><b>Average:</b> <span id="avg"></span></p>
+            <p><b>Grade:</b> <span id="grade"></span></p>
+        </div>
+
+        <h3>Subject-wise Marks</h3>
+        <table class="subject-table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                    <th>Max</th>
+                    <th>Teacher</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="subjectBody"></tbody>
+        </table>
+    </section>
+
+    <!-- Edit Subject Modal -->
+    <div id="editSubjectModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Subject</h3>
+
+            <lable>Marks Obtained</lable>
+            <input type="number" id="editMarks">
+            
+            <lable>Max Marks</lable>
+            <input type="number" id="editMaxMarks">
+            
+            <lable>Teacher Name</lable>
+            <input type="text" id="editTeacherName">
+
+            <div class="modal-actions">
+                <button onclick="updateSubject()">Save</button>
+                <button class="close-btn" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/student.js"></script>
+</body>
+</html>

@@ -1,9 +1,28 @@
+// Redirect if no login token found
 const token = localStorage.getItem("access_token");
+const userRole = localStorage.getItem("user_role");
+
 if (!token) {
-  window.location.href = "/index.html";
+    window.location.href = "/index.html";
 }
 
+// Helper: Add Authorization header
+function getAuthHeaders() {
+    return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+    };
+}
 
+// Load logged-in email in navbar
+document.getElementById("user-email").innerText =
+    localStorage.getItem("email") || "";
+
+
+
+// ===============================
+// Fetch All Students
+// ===============================
 async function fetchStudents() {
   try {
     const response = await fetch("http://127.0.0.1:8000/students/", {
@@ -24,104 +43,191 @@ async function fetchStudents() {
     console.error("Error:", err);
     alert("Error fetching students!");
   }
+
 }
 
 
+// ===============================
+// Render Students Table
+// ===============================
 function renderStudents(students) {
-  const tbody = document.getElementById("studentsTableBody");
-  tbody.innerHTML = ""; 
+    const tbody = document.getElementById("studentsTableBody");
+    tbody.innerHTML = "";
 
-  students.forEach(st => {
-    const row = document.createElement("tr");
+    students.forEach(st => {
+        const row = document.createElement("tr");
 
-    row.innerHTML = `
-      <td>${st.name}</td>
-      <td>${st.average ?? "-"}</td>
-      <td>${st.grade ?? "-"}</td>
-      <td>
-        <button class="btn btn-primary" onclick="openSubjectModal('${st.name}')">Add Subject</button>
-        <button class="btn btn-danger" onclick="deleteStudent('${st.uid}')">Delete</button>
-      </td>
-    `;
+        row.innerHTML = `
+            <td>${st.name}</td>
+            <td>${st.average ?? "-"}</td>
+            <td>${st.grade ?? "-"}</td>
+            <td>
+                <button class="btn btn-primary" onclick="openSubjectModal('${st.name}')">Add Subject</button>
+                <button class="btn btn-danger" onclick="viewDetails('${st.name}')">View</button>
+                ${userRole === "admin" 
+                    ? `<button class="btn btn-del" onclick="deleteStudent('${st.uid}')">Delete</button>` 
+                    : ""}
+            </td>
+        `;
 
-    tbody.appendChild(row);
-  });
+        tbody.appendChild(row);
+    });
 }
 
 fetchStudents();
 
 
-async function loadStudents(role) {
-    try {
-        const response = await fetch("/students", {
-            method: "GET",
-            headers: getAuthHeaders()
-        });
-
-        const students = await response.json();
-        const table = document.getElementById("students-body");
-        table.innerHTML = "";
-
-        students.forEach(s => {
-            const row = `
-                <tr>
-                    <td>${s.name}</td>
-                    <td>${s.average ?? "-"}</td>
-                    <td>${s.grade ?? "-"}</td>
-                    <td>${role === "admin"
-                        ? `<button onclick="deleteStudent('${s.uid}')">Delete</button>`
-                        : 'View'}
-                    </td>
-                </tr>`;
-
-            table.innerHTML += row;
-        });
-    }
-    catch (err) {
-        console.error("Error loading students:", err);
-        alert("Failed loading student data.");
-    }
-}
-
-
-
-function openAddStudentForm(){
+// ===============================
+// Add Student Modal
+// ===============================
+function openAddStudentModal() {
     document.getElementById("addStudentModal").style.display = "block";
 }
 
-function closeAddStudentForm(){
+function closeAddStudentModal() {
     document.getElementById("addStudentModal").style.display = "none";
 }
 
-async function addStudent(){
+// Add new student
+async function addStudent() {
     const name = document.getElementById("studentName").value;
     const total_marks = Number(document.getElementById("totalMarks").value);
     const total_sub = Number(document.getElementById("totalSubs").value);
 
-    if (!name || !total_marks || !total_sub){
+    if (!name || !total_marks || !total_sub) {
         alert("All fields are required!");
+        return;
     }
 
-    try{
-        const response = await fetch("/students/add", {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/students/add", {
             method: "POST",
             headers: getAuthHeaders(),
-            body: JSON.stringify({name, total_marks, total_sub})
+            body: JSON.stringify({ name, total_marks, total_sub })
         });
 
-        if (!response.ok){
-            const data = await response.json();
-            alert(data.detail || "Failed to add student.")
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.detail || "Failed to add student");
             return;
         }
-        else {
-            alert("Student Added!");
-            closeAddStudentForm();
-            loadStudents(localStorage.getItem("user_role"))
-        }
+
+        alert("Student successfully added!");
+        closeAddStudentModal();
+        fetchStudents();
+
+    } catch (error) {
+        console.error("Error adding student:", error);
     }
-    catch (error){
-        console.error("Error adding student", error);
+}
+
+
+// ===============================
+// Add Subject Modal
+// ===============================
+let currentStudentName = null;
+
+function openSubjectModal(studentName) {
+    currentStudentName = studentName;
+    document.getElementById("subjectStudentName").innerText = studentName;
+    document.getElementById("addSubjectModal").style.display = "block";
+}
+
+function closeSubjectModal() {
+    currentStudentName = null;
+    document.getElementById("addSubjectModal").style.display = "none";
+}
+
+async function addSubjectMarks() {
+    if (!currentStudentName) {
+        alert("Student missing!");
+        return;
     }
 
+    const subject_name = document.getElementById("subjectName").value;
+    const marks_obtain = Number(document.getElementById("subjectMarks").value);
+    const max_marks = Number(document.getElementById("subjectMaxMarks").value);
+    const teacher_name = document.getElementById("teacherName").value;
+
+    if (!subject_name || !marks_obtain || !max_marks) {
+        alert("Enter all required fields");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `http://127.0.0.1:8000/grade/${currentStudentName}/subject`,
+            {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    subject_name,
+                    marks_obtain,
+                    max_marks,
+                    teacher_name
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.detail || "Error adding subject");
+            return;
+        }
+
+        alert("Subject added successfully!");
+        closeSubjectModal();
+        fetchStudents();
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+// ===============================
+// View Student — Navigate to next page
+// ===============================
+function viewDetails(name) {
+    window.location.href = `/pages/student.html?name=${encodeURIComponent(name)}`;
+}
+
+
+
+// ===============================
+// Delete Student — Deletes the student
+// ===============================
+async function deleteStudent(uid){
+    if (!confirm("Are you sure to delete?"))
+        return;
+
+    try{
+        const response = await fetch(`http://127.0.0.1:8000/students/delete/${uid}`, {
+            method: "DELETE",
+            headers: getAuthHeaders()
+        });
+
+        if(!response.ok){
+            alert("Failed to deleted student.");
+            return;
+        }
+        alert("Deleted Successfully");
+        fetchStudents();
+    }
+    catch (error){
+        console.log(error);
+        alert("Error deleting student!");
+    }
+
+}
+
+
+// ===============================
+// Logout
+// ===============================
+function logout() {
+    localStorage.clear();
+    window.location.href = "/index.html";
 }

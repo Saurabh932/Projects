@@ -10,7 +10,7 @@
 
     <!-- Navbar -->
     <section class="navbar">
-        <div class="logo">Grade Management</div>
+        <div class="logo"><h2>Grade Management</h2></div>
         <div class="nav-right">
             <span id="user-email"></span>
             <button onclick="logout()" class="logout-btn">Logout</button>
@@ -54,14 +54,40 @@
             <label>Total Subjects</label>
             <input type="number" id="totalSubs" placeholder="e.g. 5" required>
 
-            <div class="modal-actions">
+            <div class="modal-action">
                 <button onclick="addStudent()" class="btn btn-primary">Save</button>
                 <button onclick="closeAddStudentModal()" class="btn btn-secondary">Cancel</button>
             </div>
         </div>
     </div>
 
-    <script src="../assets/js/auth.js"></script>
+
+    <!-- Add Subject Modal -->
+    <div id="addSubjectModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Marks for <span id="subjectStudentName"></span></h3>
+
+            <label>Subject Name</label>
+            <input type="text" id="subjectName" placeholder="e.g., Math">
+
+            <label>Marks Obtained</label>
+            <input type="text" id="subjectMarks" placeholder="e.g., 85">
+            
+            <label>Max Marks</label>
+            <input type="text" id="subjectMaxMarks" placeholder="e.g., 100" value="100">
+            
+            <label>Teacher Name</label>
+            <input type="text" id="teacherName" placeholder="Optional">
+
+            <div class="modal-actions">
+                <button onclick="addSubjectMarks()">Save</button>
+                <button class="close-btn" onclick="closeSubjectModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <script src="../assets/js/auth.js"></script> -->
     <script src="../assets/js/dashboard.js"></script>
 
 </body>

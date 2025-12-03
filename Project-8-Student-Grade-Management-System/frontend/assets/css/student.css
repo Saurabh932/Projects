@@ -1,0 +1,39 @@
+body{
+    background: #eef2f7;
+    font-family: Arial, sans-serif;
+}
+
+.navbar{
+    background: #0A74DA;
+    padding: 15px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+}
+
+.container {
+    padding: 25px;
+}
+
+.card{
+    background: #fff;
+    padding: 18px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.subject-table{
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.subject-table th, .subject-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.subject-table th {
+    background: #0A74DA;
+    color: #fff;
+}

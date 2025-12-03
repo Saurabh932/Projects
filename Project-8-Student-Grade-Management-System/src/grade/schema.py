@@ -30,3 +30,9 @@ class StudentGradeResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class SubjectUpdate(BaseModel):
+    marks_obtain: Optional[int] = None
+    max_marks: Optional[int] = None
+    teacher_name: Optional[str] = None

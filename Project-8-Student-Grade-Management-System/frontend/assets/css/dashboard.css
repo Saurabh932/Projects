@@ -4,7 +4,9 @@ body {
     margin: 0;
 }
 
-.navbar{
+
+/* Navbar */
+.navbar {
     background-color: #0A74DA;
     color: white;
     padding: 15px 25px;
@@ -12,6 +14,7 @@ body {
     justify-content: space-between;
     align-items: center;
 }
+
 
 
 .logout-btn {
@@ -23,40 +26,51 @@ body {
     cursor: pointer;
 }
 
-
+/* Container */
 .container {
     padding: 30px;
 }
 
+.btn {
+    cursor: pointer;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+}
 
-.students-table{
+.btn-success {
+    background-color: #0A74DA;
+}
+
+.btn-primary {
+    background-color: #28a745;
+}
+
+.btn-danger {
+    background-color: rgb(126, 195, 218);
+}
+
+.btn-del {
+    background-color: #e63946;
+}
+
+/* Table */
+.table {
     width: 100%;
     border-collapse: collapse;
     background: white;
+    margin-top: 15px;
 }
 
-
-.students-table th,
-.students-table td {
+.table th, .table td {
     padding: 12px;
     border: 1px solid #ccc;
-    text-align: left
+    text-align: left;
 }
 
-
-.add-btn {
-    background-color: #0A74DA;
-    color: white;
-    padding: 10px 14px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-
-/* Modeal Background */
-.modal{
+/* Modal */
+.modal {
     display: none;
     position: fixed;
     z-index: 10;
@@ -67,9 +81,7 @@ body {
     background: rgba(0,0,0,0.4);
 }
 
-
-/* Modal Container */
-.modal-content{
+.modal-content {
     background: #fff;
     width: 350px;
     margin: 10% auto;
@@ -77,23 +89,22 @@ body {
     border-radius: 10px;
 }
 
-.modal-content input{
+.modal-content input {
     width: 100%;
     padding: 8px;
-    margin-top:6px;
+    margin-top: 6px;
     margin-bottom: 12px;
 }
 
-.modal-actions{
+.modal-actions {
     display: flex;
     justify-content: space-between;
 }
 
-.close-btn {
+.btn-secondary {
     background-color: #999;
-    border: none;
-    padding: 8px 14px;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
+}
+
+#addSubjectModal .modal-content {
+    width: 380px;
 }
