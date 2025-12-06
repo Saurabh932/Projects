@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlmodel import select
 from sqlalchemy.ext.asyncio.session import AsyncSession
-from .model import User
+from src.db.models import User
 from .schema import UserCreation
 
 from .utils import get_hash_password
@@ -65,6 +65,13 @@ class UserService:
     async def approve_user(self, user:User, is_verified: bool, role: str, session: AsyncSession) -> User:
         user.is_verified = is_verified
         user.role = role
+        
+        # Auto-create student record when user gets verified
+        existing_student = await session.get(Student, user.uid)
+        if not existing_student:
+            from src.db.models import Student
+            new_student = Student(uid=user.uid, name=f"{user.first_name} {user.last_name}")
+            session.add(new_student)
         
         await session.commit()
         await session.refresh(user)

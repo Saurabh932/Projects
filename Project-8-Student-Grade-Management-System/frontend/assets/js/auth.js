@@ -32,7 +32,7 @@
 // });
 
 
-
+// ========================================================================================
 
 /*  
     Updating to call /auth/login
@@ -71,15 +71,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    alert(data.detail || "Login failed!");
+                    const errEl = document.getElementById("error-message");
+                    if(errEl){
+                        errEl.style.display = "block";
+                        errEl.innerText = data.detail || "Login Failed!"; 
+                    }
+                    else{
+                        alert(data.detail || "Login failed!");
+                    }
                     return;
                 }
 
                 localStorage.setItem("access_token", data.access_token);
                 localStorage.setItem("user_role", data.user.role);
                 localStorage.setItem("user_email", data.user.email);
+                localStorage.setItem("user_id", data.user.uid);
 
-                window.location.href = "/pages/dashboard.html";
+
+                if (data.user.role === "admin"){
+                    window.location.href = "/pages/dashboard.html";
+                }
+                else{
+                    window.location.href = "/pages/student_grade.html";
+                }
 
             } catch (error) {
                 console.error("Login error:", error);
@@ -92,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function logout(){
     localStorage.clear();
-    window.location.href="/";
+    window.location.href="/index.html";
 }
 
 function getToken(){

@@ -3,30 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Student Grade System</title>
+    <title>Login | Grade Manager</title>
     <link rel="stylesheet" href="../assets/css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    
-    <div class="login-container">
-        <h2>Welcome Back</h2>
-        <p class="subtitle">Sign in to continue</p>
 
-        <form id="loginForm">
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Password" required>
-            
-            <button type="submit">Login</button>
-        </form>
+<header class="navbar">
+    <h2 class="logo">🎓 Grade Manager</h2>
+</header>
 
-        <p class="footer-text">
-            Don't have an accout?
-            <a href="#">Contact Admin</a>
-        </p>
+<div class="login-container">
 
-        <p id="error-message" class="error-msg"></p>
-    </div>
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/api.js"></script>
+    <h3 class="welcome">Welcome Back!</h3>
+    <p class="subtitle">Sign in to continue managing grades</p>
+
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Email address" required>
+        <input type="password" id="password" placeholder="Password" required>
+
+        <button type="submit" class="btn primary-btn">Login</button>
+    </form>
+
+    <p class="footer-text">
+        Need access?
+        <a href="/pages/signup.html">Request Account</a>
+    </p>
+
+    <p id="error-message" class="error-msg">Invalid credentials</p>
+</div>
+
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/api.js"></script>
+
 </body>
 </html>

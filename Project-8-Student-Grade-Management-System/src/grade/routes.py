@@ -1,4 +1,5 @@
 from uuid import UUID
+import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlmodel import select
@@ -6,53 +7,76 @@ from sqlmodel import select
 from .schema import SubjectCreation, SubjectResponse, StudentGradeResponse, SubjectUpdate
 from .service import GradeService
 
-from src.auth.dependencies import RoleCheck
+from src.auth.dependencies import RoleCheck, TokenBearer
 from src.student.service import StudentService
 from src.db.db import get_session
-from src.db.models import SubjectMarks
+from src.db.models import Student, SubjectMarks, User
 
 
 grade_router = APIRouter(prefix="/grade", tags=["grade"])
 admin_only = RoleCheck(['admin'])
 grade_service = GradeService()
 student_service = StudentService()
+access_token_bearer = TokenBearer()
+
+
+@grade_router.get("/me")
+async def get_my_grade(session: AsyncSession = Depends(get_session), payload: dict = Depends(access_token_bearer)):
+
+    try:
+        user_uid = payload["user"]["user_id"]  # ⭐ FIXED
+    except KeyError:
+        raise HTTPException(status_code=400, detail="Invalid token structure")
+
+    result = await session.execute(
+        select(Student).where(Student.user_uid == uuid.UUID(user_uid))
+    )
+    student = result.scalars().first()
+
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found")
+
+    await session.refresh(student, ["subjects"])
+
+    return {
+        "name": student.name,
+        "average": student.average,
+        "grade": student.grade,
+        "subjects": student.subjects or []
+    }
+
 
 
 """
     Adding subject with there marks (Admin Access Only)
 """
-@grade_router.post("/{name}/subject", dependencies=[Depends(admin_only)], response_model=SubjectResponse, status_code=status.HTTP_200_OK)
-async def add_subject_marks(name: str, subject_data:SubjectCreation, session: AsyncSession = Depends(get_session)):
-    try:
-        subject = await grade_service.add_subject(name, subject_data, session)
-        return subject
+@grade_router.post("/{student_uid}/subject", dependencies=[Depends(admin_only)], response_model=SubjectResponse, status_code=status.HTTP_200_OK)
+async def add_subject_marks(student_uid: UUID, subject_data: SubjectCreation, session: AsyncSession = Depends(get_session)):
+
+    student = await student_service.get_student_by_id(student_uid, session)
     
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    subject = await grade_service.add_subject_by_uid(student, subject_data, session)
+    return subject
+
 
 
 """
     Getting full details of the student
 """
-@grade_router.get("/{name}", response_model=StudentGradeResponse, status_code=status.HTTP_200_OK)
-async def get_student_grade(name: str, session: AsyncSession = Depends(get_session)):
+@grade_router.get("/student/{student_uid}", response_model=StudentGradeResponse)
+async def get_student_grade(student_uid: UUID, session: AsyncSession = Depends(get_session)):
+    student = await student_service.get_student_by_id(student_uid, session)
     
-    ''' Getting Student First '''
-    student = await student_service.get_student_by_name(name, session)
     if not student:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Student Not Found")
-    
-    ''' Getting all the subjects from the studen '''
-    result = await session.execute(select(SubjectMarks).where(SubjectMarks.student_uid==student.uid))
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    result = await session.execute(select(SubjectMarks).where(SubjectMarks.student_uid == student.uid))
     subjects = result.scalars().all()
-    
-    ''' Let Pydantic convert ORM objects -> response model(orm_mode=True) '''
-    
-    return StudentGradeResponse(uid=student.uid,
-                                name=student.name,
-                                average=student.average,
-                                grade=student.grade,
-                                subjects=subjects)
+
+    return StudentGradeResponse(uid=student.uid, name=student.name, average=student.average, grade=student.grade, subjects=subjects)
 
 
 """
@@ -106,3 +130,7 @@ async def delete_subject(uid: UUID,
     await grade_service.recalculate(student, session)
 
     return {"message": "Subject deleted successfully"}
+
+
+
+

@@ -5,10 +5,10 @@ from pydantic import BaseModel, Field, EmailStr
 
 
 class UserCreation(BaseModel):
-    first_name : str = Field(max_length=20)
-    last_name : str = Field(max_length=20)
+    first_name :  str | None = None
+    last_name :  str | None = None
     email : EmailStr
-    password : str = Field(...)
+    password : str
     
     
 class UserModel(BaseModel):

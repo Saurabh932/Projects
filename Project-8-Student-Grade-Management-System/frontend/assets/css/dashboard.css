@@ -1,110 +1,316 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #eef2f7;
+/* Dashboard UI — Modern Navy + Teal + Green + Yellow */
+
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
 }
 
+body {
+    background: #d7edfde7;
+}
 
 /* Navbar */
 .navbar {
-    background-color: #0A74DA;
-    color: white;
-    padding: 15px 25px;
+    background: linear-gradient(to right, #083D77, #0ABAB5);
+    padding: 18px 28px;
+    color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+.logo {
+    font-size: 22px;
+    font-weight: 600;
+}
 
+.user-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
 
 .logout-btn {
-    background: #ff3b3b;
-    border: none;
-    padding: 8px 15px;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Container */
-.container {
-    padding: 30px;
-}
-
-.btn {
-    cursor: pointer;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 6px;
+    background: #052C4B;
     color: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid #ffffff40;
+    cursor: pointer;
+    transition: 0.25s;
+}
+.logout-btn:hover {
+    background: #031e31;
 }
 
-.btn-success {
-    background-color: #0A74DA;
+
+
+/* Main Layout */
+.container {
+    max-width: 90%;
+    margin: 28px auto;
+    padding: 0 20px;
 }
 
-.btn-primary {
-    background-color: #28a745;
+/* Header */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
 }
 
-.btn-danger {
-    background-color: rgb(126, 195, 218);
+/* Buttons */
+.btn {
+    padding: 9px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.25s;
 }
 
-.btn-del {
-    background-color: #e63946;
+.primary-btn { background: #28B463; color: #fff; }
+.primary-btn:hover { background: #1F8F50; }
+
+.secondary-btn { background: #FFD93D; color: #3A3A3A; }
+.secondary-btn:hover { background: #F4C52B; }
+
+/* Action Buttons Layout */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Action Button Styles */
+.action-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.25s;
+}
+
+.view-btn {
+    background: #0ABAB5;
+    color: #fff;
+}
+.view-btn:hover {
+    background: #099B98;
+    transform: translateY(-1px);
+}
+
+.edit-btn {
+    background: #0072CE;
+    color: #fff;
+}
+.edit-btn:hover {
+    background: #005da8;
+    transform: translateY(-1px);
+}
+
+.delete-btn {
+    background: #FF3B30;
+    color: #fff;
+}
+.delete-btn:hover {
+    background: #D92C22;
+    transform: translateY(-1px);
+}
+
+/* Filter Box */
+.filter-box {
+    background: #FFFFFF;
+    padding: 14px;
+    border-radius: 10px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+    box-shadow: 0px 3px 12px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.input {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #DCE6F0;
+    width: 160px;
+}
+
+/* Cards */
+.card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 10px;
+    box-shadow: 0px 4px 16px rgba(0,0,0,0.07);
+}
+
+/* Approval Section */
+#approvalSection {
+    margin-top: 20px;
+}
+
+#approvalSection h3 {
+    font-size: 18px;
+    padding: 12px;
+    background: #083D77;
+    color: #fff;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* Approval Dropdown Animation */
+#approvalCard {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+#approvalCard.active {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 10px;
 }
 
 /* Table */
 .table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
-.table th, .table td {
+.table th,
+.table td {
+    text-align: center;
     padding: 12px;
-    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.table th:first-child,
+.table td:first-child {
     text-align: left;
 }
 
-/* Modal */
+.table th {
+    background: #0ABAB5;
+    color: #fff;
+}
+
+.table td {
+    border-bottom: 1px solid #E1E8F0;
+}
+
+.table tr:nth-child(even) {
+    background: #F7FCFF;
+}
+
+.table tr:hover {
+    background: #E8F6FF;
+    transition: 0.25s;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.pagination .btn {
+    background: #083D77;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 14px;
+}
+.pagination .btn:hover {
+    background: #052A52;
+    transform: translateY(-2px);
+}
+
+/* Modals */
 .modal {
-    display: none;
     position: fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-    width:100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
+    z-index: 999;
 }
 
 .modal-content {
-    background: #fff;
-    width: 350px;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 10px;
+    width: 400px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0px 6px 26px rgba(0,0,0,0.15);
+    animation: fadeModal 0.3s ease-out;
 }
 
+.modal-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: #083D77;
+}
+
+/* Inputs */
 .modal-content input {
     width: 100%;
-    padding: 8px;
-    margin-top: 6px;
+    padding: 12px;
     margin-bottom: 12px;
+    border-radius: 10px;
+    border: 1px solid #c4d3e8;
+    background: #F7FBFF;
+    font-size: 14px;
 }
 
-.modal-actions {
-    display: flex;
-    justify-content: space-between;
+/* Modal Buttons */
+.modal-content button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 6px;
 }
 
-.btn-secondary {
-    background-color: #999;
+/* Save Button */
+.modal-content button:first-of-type {
+    background: #28B463;
+    color: white;
+    font-weight: 600;
+}
+.modal-content button:first-of-type:hover {
+    background: #1F8F50;
 }
 
-#addSubjectModal .modal-content {
-    width: 380px;
+/* Cancel Button */
+.modal-content button:last-of-type {
+    background: #D9D9D9;
+    color: #333;
+}
+.modal-content button:last-of-type:hover {
+    background: #C1C1C1;
+}
+
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }

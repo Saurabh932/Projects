@@ -8,109 +8,103 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <section class="navbar">
-        <div class="logo"><h2>Grade Management</h2></div>
-        <div class="nav-right">
-            <span id="user-email"></span>
-            <button onclick="logout()" class="logout-btn">Logout</button>
-        </div>
-    </section>
+<section class="navbar">
+    <h2>Grade Management</h2>
+    <div>
+        <span id="user-email"></span>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+</section>
 
-    <!-- Student Table Section -->
-    <section class="section">
-        <div class="container">
-            <h2>Student Records</h2>
+<section class="container">
 
-            <button class="btn btn-success" onclick="openAddStudentModal()">+ Add Student</button>
+    <h2>Students</h2>
+    <button class="btn btn-success" id="addStudentBtn" onclick="openAddStudentModal()">+ Add Student</button>
 
-            <div class="filter-box">
-                <input type="text" id="searchBox" placeholder="Search by name..">
+    <div class="filter-box">
+        <input type="text" id="searchBox" placeholder="Search name..." oninput="applyFilters()">
+        
+        <select id="sortSelect" onchange="applyFilters()">
+            <option value="name">Name</option>
+            <option value="average">Average</option>
+            <option value="grade">Grade</option>
+        </select>
 
-                <select id="sortSelect">
-                    <option value="name">Name</option>
-                    <option value="average">Average</option>
-                    <option value="grade">Grade</option>
-                </select>
+        <select id="orderSelect" onchange="applyFilters()">
+            <option value="asc">Asc</option>
+            <option value="desc">Desc</option>
+        </select>
 
-                <select id="orderSelect">
-                    <option value="asc">Asc</option>
-                    <option value="desc">Desc</option>
-                </select>
+        <button class="btn btn-primary" onclick="applyFilters()">Apply</button>
+    </div>
 
-                <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
-            </div>
 
-            <table class="table" id="studentsTable">
+    <!-- Approval Panel (Admin Only) -->
+    <div id="approvalSection" style="display:none;">
+        <h3 onclick="toggleApprovalCard()">Pending Approvals ⬇</h3>
+
+        <div id="approvalCard" style="display:none;">
+            <table class="table">
                 <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Average</th>
-                    <th>Grade</th>
-                    <th>Actions</th>
-                </tr>
+                <tr><th>Email</th><th>Actions</th></tr>
                 </thead>
-                <tbody id="studentsTableBody">
-                    <!-- Data Loads Here -->
-                </tbody>
+                <tbody id="approvalBody"></tbody>
             </table>
-
-            <div class="pagination">
-                <button onclick="prevPage()">Prev</button>
-                <button onclick="nextPage()">Next</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Add Student Modal -->
-    <div id="addStudentModal" class="modal">
-        <div class="modal-content">
-            <h3>Add New Student</h3>
-
-            <label>Name</label>
-            <input type="text" id="studentName" placeholder="Enter student name" required>
-
-            <label>Total Marks (initially)</label>
-            <input type="number" id="totalMarks" placeholder="e.g. 250" required>
-
-            <label>Total Subjects</label>
-            <input type="number" id="totalSubs" placeholder="e.g. 5" required>
-
-            <div class="modal-action">
-                <button onclick="addStudent()" class="btn btn-primary">Save</button>
-                <button onclick="closeAddStudentModal()" class="btn btn-secondary">Cancel</button>
-            </div>
         </div>
     </div>
 
 
-    <!-- Add Subject Modal -->
-    <div id="addSubjectModal" class="modal">
-        <div class="modal-content">
-            <h3>Add Marks for <span id="subjectStudentName"></span></h3>
+    <table class="table" id="studentsTable">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Average</th>
+            <th>Grade</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="studentsTableBody"></tbody>
+    </table>
 
-            <label>Subject Name</label>
-            <input type="text" id="subjectName" placeholder="e.g., Math">
-
-            <label>Marks Obtained</label>
-            <input type="text" id="subjectMarks" placeholder="e.g., 85">
-            
-            <label>Max Marks</label>
-            <input type="text" id="subjectMaxMarks" placeholder="e.g., 100" value="100">
-            
-            <label>Teacher Name</label>
-            <input type="text" id="teacherName" placeholder="Optional">
-
-            <div class="modal-actions">
-                <button onclick="addSubjectMarks()">Save</button>
-                <button class="close-btn" onclick="closeSubjectModal()">Cancel</button>
-            </div>
-        </div>
+    <div class="pagination">
+        <button class="btn" onclick="prevPage()">Prev</button>
+        <button class="btn" onclick="nextPage()">Next</button>
     </div>
 
+</section>
 
-    <!-- <script src="../assets/js/auth.js"></script> -->
-    <script src="../assets/js/dashboard.js"></script>
 
+
+<!-- Add Student Modal -->
+<div class="modal" id="addStudentModal">
+    <div class="modal-content">
+        <h3>Add Student</h3>
+
+        <label>Name</label>
+        <input id="studentName" type="text">
+
+        <button onclick="addStudent()">Save</button>
+        <button onclick="closeAddStudentModal()">Cancel</button>
+    </div>
+</div>
+
+
+<!-- Add Subject Modal -->
+<div class="modal" id="addSubjectModal">
+    <div class="modal-content">
+        <h3>Add Marks for <span id="subjectStudentName"></span></h3>
+
+        <input id="subjectName" placeholder="Subject Name">
+        <input id="subjectMarks" placeholder="Marks">
+        <input id="subjectMaxMarks" placeholder="Max Marks" value="100">
+        <input id="teacherName" placeholder="Teacher">
+
+        <button onclick="addSubjectMarks()">Add Marks</button>
+        <button onclick="closeSubjectModal()">Cancel</button>
+    </div>
+</div>
+
+
+<script src="../assets/js/dashboard.js"></script>
 </body>
 </html>

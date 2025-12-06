@@ -57,6 +57,7 @@ async def get_students(search: Optional[str] = Query(None), sort: Optional[str] 
         return students
 
 
+
 '''
     Creating / Adding Student
 '''

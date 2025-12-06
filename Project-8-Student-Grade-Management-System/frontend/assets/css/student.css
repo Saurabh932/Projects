@@ -1,39 +1,142 @@
-body{
-    background: #eef2f7;
-    font-family: Arial, sans-serif;
+/* Student Page — Premium Modern Theme */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
 }
 
-.navbar{
-    background: #0A74DA;
-    padding: 15px;
+body {
+    background: #F2F7FF; /* Smooth light blue */
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(to right, #0A3D62, #1B98E0);
+    padding: 18px 32px;
     color: #fff;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.container {
-    padding: 25px;
-}
-
-.card{
-    background: #fff;
-    padding: 18px;
-    margin-bottom: 20px;
+.logout-btn {
+    background: #1B98E0;
+    padding: 8px 18px;
+    border: none;
     border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+.logout-btn:hover {
+    background: #1566BA;
 }
 
-.subject-table{
+/* Main Layout */
+.container {
+    max-width: 900px;
+    padding: 32px 20px;
+    margin: auto;
+}
+
+/* Cards */
+.card {
+    background: #FFFFFF;
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0px 6px 20px rgba(0,0,0,0.07);
+    margin-bottom: 25px;
+    animation: fadeIn 0.35s ease-out;
+}
+
+/* Student Info */
+.student-info h2 {
+    font-size: 26px;
+    margin-bottom: 14px;
+    color: #0A3D62;
+}
+
+.info-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.info-item {
+    flex: 1;
+    background: #F8FBFF;
+    padding: 14px 18px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.label {
+    color: #4A6472;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+/* Grade & Avg Pills */
+.value {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.grade-pill {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+/* Pastel Grade Colors */
+.badge-A { background: #D4FADD; color: #1B7A41; }
+.badge-B { background: #E0F3FF; color: #1876A0; }
+.badge-C { background: #FFF1D6; color: #B76B00; }
+.badge-F { background: #FFECEC; color: #CF2A2A; }
+
+/* Table */
+.subject-table {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
-}
-
-.subject-table th, .subject-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
 }
 
 .subject-table th {
-    background: #0A74DA;
+    background: #1B98E0;
     color: #fff;
+    padding: 14px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.subject-table td {
+    padding: 12px;
+    border-bottom: 1px solid #E1E8F0;
+    font-size: 14px;
+    text-align: center;
+}
+
+.subject-table tr:nth-child(even) {
+    background: #F5FAFF;
+}
+
+.subject-table tr:hover {
+    background: #DCF1FF;
+    transition: 0.25s;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    .info-grid {
+        flex-direction: column;
+    }
 }

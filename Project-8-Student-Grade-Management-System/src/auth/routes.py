@@ -2,6 +2,8 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 
+import uuid
+from sqlmodel import select
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from .utils import verify_password, create_access_token
@@ -10,6 +12,7 @@ from .schema import UserModel, UserLogin, UserApproval
 from .dependencies import RoleCheck, get_current_user
 
 from src.db.db import get_session
+from src.db.models import Student, User
 
 auth_router = APIRouter(prefix="/auth", tags=['auth'])
 user_service = UserService()
@@ -84,3 +87,60 @@ async def approve_user(email: str, data: UserApproval, session: AsyncSession = D
                                            role=data.role, session=session)
     
     return user
+
+
+"""
+    Pending Users List
+"""
+@auth_router.get("/pending", dependencies=[Depends(admin_only)])
+async def get_pending_users(session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(User).where(User.is_verified == False))
+    users = result.scalars().all()
+    return [{"uid": u.uid, "email": u.email} for u in users]
+
+
+"""
+    Approve User 
+"""
+@auth_router.post("/approve/{user_id}")
+async def approve_user(user_id: uuid.UUID, session: AsyncSession = Depends(get_session)):
+    user = await session.get(User, user_id)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user.is_verified:
+        return {"message": "User already approved"}
+
+    # Approve the user
+    user.is_verified = True
+
+    # Create Student profile linked to this User
+    student = Student(
+        name=user.first_name or "Unnamed Student",
+        user_uid=user.uid
+    )
+
+    session.add(student)
+    await session.commit()
+    await session.refresh(user)
+
+    return {"message": "User approved", "user_uid": str(user.uid), "student_uid": str(student.uid)}
+
+
+
+
+"""
+    Reject User Approval
+"""
+@auth_router.delete("/reject/{uid}", dependencies=[Depends(admin_only)])
+async def reject_user(uid: uuid.UUID, session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(User).where(User.uid == uid))
+    user = result.scalars().first()
+    
+    if not user:
+        raise HTTPException(404, "User not found")
+    
+    await session.delete(user)
+    await session.commit()
+    return {"message":"User rejected and removed"}

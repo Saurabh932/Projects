@@ -36,6 +36,17 @@ class GradeService:
         return new_sub
     
     
+    
+    async def add_subject_by_uid(self, student, data: SubjectCreation, session: AsyncSession):
+        new_sub = SubjectMarks(student_uid=student.uid, **data.model_dump())
+        session.add(new_sub)
+        await session.commit()
+        await self.recalculate(student, session)
+        await session.refresh(new_sub)
+        return new_sub
+
+    
+    
     async def recalculate(self, student, session):
         result = await session.execute(select(SubjectMarks).where(SubjectMarks.student_uid == student.uid))
         subjects = result.scalars().all()
