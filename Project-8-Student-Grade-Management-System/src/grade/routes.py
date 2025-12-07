@@ -20,6 +20,9 @@ student_service = StudentService()
 access_token_bearer = TokenBearer()
 
 
+"""
+    Showing students dashboard
+"""
 @grade_router.get("/me")
 async def get_my_grade(session: AsyncSession = Depends(get_session), payload: dict = Depends(access_token_bearer)):
 

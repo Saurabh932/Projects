@@ -42,11 +42,11 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Student Grade Management System",
-    version="1.0.0",
-    description="FastAPI + SQLModel based project for managing student grades",
-    lifespan=lifespan
-)
+                title="Student Grade Management System",
+                version="1.0.0",
+                description="FastAPI + SQLModel based project for managing student grades",
+                lifespan=lifespan
+            )
 
 app.include_router(router)
 app.include_router(auth_router)
