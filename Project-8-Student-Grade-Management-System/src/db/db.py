@@ -10,6 +10,15 @@ async_engine = create_async_engine(
     echo=True       # displaying SQL qureis
 )
 
+
+# Global sessionmaker needed for background scripts
+async_session_maker = sessionmaker(
+    bind=async_engine,
+    expire_on_commit=False,
+    class_=AsyncSession
+)
+
+
 # Function to initialize db and create table
 async def init_db() -> None:
     async with async_engine.begin() as conn:
