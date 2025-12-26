@@ -2,11 +2,22 @@
 // Authentication & Role Check
 // ===============================
 const token = localStorage.getItem("access_token");
-const userRole = localStorage.getItem("user_role") || "student";
+const userRole = (localStorage.getItem("user_role") || "student").toLowerCase();
+
+console.log("Current User Role:", userRole);
+console.log("Token Present:", !!token);
 
 if (!token) {
+    console.warn("No token found, redirecting to login.");
     window.location.href = "/index.html";
 }
+
+
+if (userRole !== "admin") {
+    console.warn("Non-admin attempted to access dashboard");
+    window.location.href = "/pages/student_grade.html";
+}
+
 
 function getAuthHeaders() {
     return {
@@ -15,77 +26,77 @@ function getAuthHeaders() {
     };
 }
 
-// Load Navbar Email
 const emailSpan = document.getElementById("user-email");
 if (emailSpan) {
     emailSpan.innerText = localStorage.getItem("user_email") || "";
 }
 
-
 // ===============================
 // Admin UI Rule
 // ===============================
-if (userRole !== "admin") {
-    document.getElementById("addStudentBtn").style.display = "none";
-    document.getElementById("approvalSection").style.display = "none";
-} else {
-    document.getElementById("approvalSection").style.display = "block";
-    fetchApprovals();
-}
+function applyRoleVisibility() {
+    const addBtn = document.getElementById("addStudentBtn");
+    const approvalSec = document.getElementById("approvalSection");
 
+    if (userRole !== "admin") {
+        if (addBtn) addBtn.style.display = "none";
+        if (approvalSec) approvalSec.style.display = "none";
+    } else {
+        if (approvalSec) {
+            approvalSec.style.display = "block";
+            fetchApprovals();
+        }
+    }
+}
 
 // ===============================
 // Pending Approvals (Admin)
 // ===============================
 async function fetchApprovals() {
     try {
-        const response = await fetch("http://127.0.0.1:8000/auth/pending", {
-            headers: getAuthHeaders(),
-        });
+        const response = await fetch("/auth/pending", { headers: getAuthHeaders() });
         const users = await response.json();
-
         const tbody = document.getElementById("approvalBody");
-        tbody.innerHTML = "";
+        if (!tbody) return;
 
+        tbody.innerHTML = "";
         users.forEach(u => {
             tbody.innerHTML += `
                 <tr>
                     <td>${u.email}</td>
                     <td>
-                        <button class="btn-approve" onclick="approveUser('${u.uid}')">Approve</button>
-                        <button class="btn-reject" onclick="rejectUser('${u.uid}')">Reject</button>
+                        <button class="action-btn btn-approve" onclick="approveUser('${u.uid}')">Approve</button>
+                        <button class="btn-reject action-btn delete-btn" onclick="rejectUser('${u.uid}')">Reject</button>
                     </td>
-                </tr>
-            `;
+                </tr>`;
         });
     } catch (err) {
-        console.error(err);
+        console.error("Approval Fetch Error:", err);
     }
 }
 
 function toggleApprovalCard() {
     const card = document.getElementById("approvalCard");
-    card.style.display = card.style.display === "none" ? "block" : "none";
+    if (!card) return;
+
+    // We toggle the 'active' class to trigger the CSS transition
+    card.classList.toggle("active");
+
+    // Optional: Log to verify it's working
+    console.log("Card classes:", card.className);
 }
 
 async function approveUser(uid) {
-    await fetch(`http://127.0.0.1:8000/auth/approve/${uid}`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-    });
+    await fetch(`/auth/approve/${uid}`, { method: "POST", headers: getAuthHeaders() });
     alert("User Approved!");
     fetchApprovals();
 }
 
 async function rejectUser(uid) {
-    await fetch(`http://127.0.0.1:8000/auth/reject/${uid}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-    });
+    await fetch(`/auth/reject/${uid}`, { method: "DELETE", headers: getAuthHeaders() });
     alert("User Rejected!");
     fetchApprovals();
 }
-
 
 // ===============================
 // Student Fetch + Pagination
@@ -106,77 +117,63 @@ function applyFilters() {
 
 async function fetchStudents() {
     try {
-        const url = `http://127.0.0.1:8000/students/?search=${search}&sort=${sort}&order=${order}&limit=${limit}&offset=${offset}`;
+        const url = `/students/?search=${search}&sort=${sort}&order=${order}&limit=${limit}&offset=${offset}`;
+        console.log("Fetching students from:", url);
+        
         const res = await fetch(url, { headers: getAuthHeaders() });
-        const students = await res.json();
-        renderStudents(students);
-    } catch {
-        alert("Failed to load students!");
+        const data = await res.json();
+        
+        console.log("Student Data Received:", data);
+        
+        // Handle case where backend might return { students: [...] } instead of [...]
+        const studentsArray = Array.isArray(data) ? data : (data.students || []);
+        renderStudents(studentsArray);
+    } catch (err) {
+        console.error("Student Fetch Error:", err);
+        alert("Failed to load students! Check console for errors.");
     }
 }
 
-function nextPage() {
-    offset += limit;
-    fetchStudents();
-}
-
-function prevPage() {
-    offset = Math.max(0, offset - limit);
-    fetchStudents();
-}
-
+function nextPage() { offset += limit; fetchStudents(); }
+function prevPage() { offset = Math.max(0, offset - limit); fetchStudents(); }
 
 // ===============================
 // Render Students Table
 // ===============================
 function renderStudents(students) {
     const tbody = document.getElementById("studentsTableBody");
+    if (!tbody) return;
     tbody.innerHTML = "";
 
     students.forEach(st => {
-        const isAdmin = userRole === "admin"; // If needed later
+        const isAdmin = userRole === "admin";
         tbody.innerHTML += `
             <tr>
                 <td>${st.name}</td>
                 <td>${st.average ?? "-"}</td>
                 <td>${st.grade ?? "-"}</td>
                 <td class="actions">
-                    <button class="action-btn view-btn" onclick="viewStudent('${st.uid}')">
-                        🔍 View
-                    </button>
-                    <button class="action-btn edit-btn" onclick="openSubjectModal('${st.uid}', '${st.name}')">
-                    ✏ Add Subject
-                    </button>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteStudent('${st.uid}')">
-                        🗑 Delete
-                    </button>
+                    <button class="action-btn view-btn" onclick="viewStudent('${st.uid}')">🔍 View</button>
+                    ${isAdmin ? `
+                        <button class="action-btn edit-btn" onclick="openSubjectModal('${st.uid}', '${st.name}')">✏ Add Subject</button>
+                        <button class="action-btn delete-btn" onclick="deleteStudent('${st.uid}')">🗑 Delete</button>
+                    ` : ''}
                 </td>
             </tr>`;
     });
-
 }
-
-fetchStudents();
-
-
 
 // ===============================
-// Add Student
+// Modals
 // ===============================
-function openAddStudentModal() {
-    document.getElementById("addStudentModal").style.display = "flex";
-}
-
-function closeAddStudentModal() {
-    document.getElementById("addStudentModal").style.display = "none";
-}
+function openAddStudentModal() { document.getElementById("addStudentModal").style.display = "flex"; }
+function closeAddStudentModal() { document.getElementById("addStudentModal").style.display = "none"; }
 
 async function addStudent() {
     const name = document.getElementById("studentName").value.trim();
     if (!name) return alert("Enter student name!");
 
-    const res = await fetch("http://127.0.0.1:8000/students/add", {
+    const res = await fetch("/students/add", {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify({ name })
@@ -188,92 +185,54 @@ async function addStudent() {
     }
 
     closeAddStudentModal();
-    alert("Student Added!");
     fetchStudents();
 }
 
-
-
-// ===============================
-// Add Subject (Marks)
-// ===============================
 let currentStudentUID = null;
-let currentStudentName = null;
-
 function openSubjectModal(uid, name) {
-    if (userRole !== "admin") {
-        alert("Only admin can add subjects!");
-        return;
-    }
-
     currentStudentUID = uid;
-    currentStudentName = name;
-
-    document.getElementById("subjectStudentName").innerText = currentStudentName;
-    document.getElementById("addSubjectModal").style.display = "flex"; // CENTER FIX
+    document.getElementById("subjectStudentName").innerText = name;
+    document.getElementById("addSubjectModal").style.display = "flex";
 }
 
-
-
-
-function closeSubjectModal() {
-    currentStudentUID = null;
-    currentStudentName = null;
-    document.getElementById("addSubjectModal").style.display = "none";
-}
+function closeSubjectModal() { document.getElementById("addSubjectModal").style.display = "none"; }
 
 async function addSubjectMarks() {
-    if (!currentStudentUID) return alert("No student selected!");
-
     const subject_name = document.getElementById("subjectName").value;
     const marks_obtain = Number(document.getElementById("subjectMarks").value);
     const max_marks = Number(document.getElementById("subjectMaxMarks").value);
     const teacher_name = document.getElementById("teacherName").value;
 
-    const res = await fetch(`http://127.0.0.1:8000/grade/${currentStudentUID}/subject`, {
+    await fetch(`/grade/${currentStudentUID}/subject`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify({ subject_name, marks_obtain, max_marks, teacher_name })
     });
 
-    if (!res.ok) return alert("Error adding marks!");
-
     closeSubjectModal();
-    alert("Marks Added!");
     fetchStudents();
 }
 
-
-
-// ===============================
-// Delete Student
-// ===============================
 async function deleteStudent(uid) {
     if (!confirm("Delete student?")) return;
-
-    await fetch(`http://127.0.0.1:8000/students/delete/${uid}`, {
-        method: "DELETE",
-        headers: getAuthHeaders()
-    });
-
+    await fetch(`/students/delete/${uid}`, { method: "DELETE", headers: getAuthHeaders() });
     fetchStudents();
 }
 
-
-
-// ===============================
-// View Student Profile Page
-// ===============================
 function viewStudent(uid) {
-    window.location.href = `/pages/student_grade.html?uid=${uid}`;
+    if (userRole !== "admin") {
+        alert("Unauthorized");
+        return;
+    }
+    window.location.href = `/pages/student.html?uid=${uid}`;
 }
 
-
+function logout() { localStorage.clear(); window.location.href = "/index.html"; }
 
 // ===============================
-// Logout
+// INITIALIZE
 // ===============================
-function logout() {
-    localStorage.clear();
-    window.location.href = "/index.html";
-}
+document.addEventListener("DOMContentLoaded", () => {
+    applyRoleVisibility();
+    fetchStudents();
+});

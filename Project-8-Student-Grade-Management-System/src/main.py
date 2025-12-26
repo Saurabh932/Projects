@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from src.db.db import init_db, get_session
@@ -47,6 +48,15 @@ app = FastAPI(
                 description="FastAPI + SQLModel based project for managing student grades",
                 lifespan=lifespan
             )
+
+# ✅ CORS (safe even though we now use relative URLs)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # dev only
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(router)
 app.include_router(auth_router)

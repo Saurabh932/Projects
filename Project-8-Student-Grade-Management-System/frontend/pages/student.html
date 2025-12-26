@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Grades | Grade Manager</title>
+    <title>Manage Student | Grade Manager</title>
 
     <link rel="stylesheet" href="../assets/css/student.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -11,7 +11,8 @@
 <body>
 
 <header class="navbar">
-    <h2 class="logo">🎓 My Grades</h2>
+    <button class="btn back-btn" onclick="goBack()">← Back</button>
+    <h2 class="logo">🎓 Manage Student</h2>
     <button onclick="logout()" class="btn logout-btn">Logout</button>
 </header>
 
@@ -27,7 +28,7 @@
             </div>
             <div class="info-item">
                 <span class="label">Grade</span>
-                <span id="grade" class="value"></span>
+                <span id="grade" class="value grade-pill"></span>
             </div>
         </div>
     </div>
@@ -42,6 +43,7 @@
                     <th>Marks</th>
                     <th>Max</th>
                     <th>Teacher</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="subjectBody"></tbody>
@@ -50,6 +52,27 @@
 
 </main>
 
-<script src="../assets/js/student_grade.js"></script>
+<!-- Edit Subject Modal -->
+<div class="modal" id="editSubjectModal">
+    <div class="modal-content">
+        <h3>Edit Subject</h3>
+
+        <label>Marks Obtained</label>
+        <input type="number" id="editMarks">
+
+        <label>Max Marks</label>
+        <input type="number" id="editMaxMarks">
+
+        <label>Teacher Name</label>
+        <input type="text" id="editTeacherName">
+
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="updateSubject()">Save</button>
+            <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/student.js"></script>
 </body>
 </html>

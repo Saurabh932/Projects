@@ -44,9 +44,16 @@
 
 // If already logged in -> go to dashboard
 const existingToken = localStorage.getItem("access_token");
+const existingRole = localStorage.getItem("user_role");
+
 if (existingToken && window.location.pathname.endsWith("index.html")) {
-    window.location.href = "/pages/dashboard.html";
+    if (existingRole === "admin") {
+        window.location.href = "/pages/dashboard.html";
+    } else {
+        window.location.href = "/pages/student_grade.html";
+    }
 }
+
 
 // If new user
 document.addEventListener("DOMContentLoaded", function () {

@@ -8,7 +8,7 @@
 }
 
 body {
-    background: #F2F7FF; /* Smooth light blue */
+    background: #F2F7FF;
 }
 
 /* Navbar */
@@ -21,6 +21,14 @@ body {
     align-items: center;
 }
 
+.back-btn {
+    background: transparent;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 .logout-btn {
     background: #1B98E0;
     padding: 8px 18px;
@@ -30,13 +38,13 @@ body {
     font-weight: 600;
     color: #fff;
     cursor: pointer;
-    transition: 0.25s ease;
 }
+
 .logout-btn:hover {
     background: #1566BA;
 }
 
-/* Main Layout */
+/* Layout */
 .container {
     max-width: 900px;
     padding: 32px 20px;
@@ -50,7 +58,6 @@ body {
     border-radius: 14px;
     box-shadow: 0px 6px 20px rgba(0,0,0,0.07);
     margin-bottom: 25px;
-    animation: fadeIn 0.35s ease-out;
 }
 
 /* Student Info */
@@ -62,37 +69,33 @@ body {
 
 .info-grid {
     display: flex;
-    justify-content: space-between;
     gap: 25px;
 }
 
 .info-item {
     flex: 1;
     background: #F8FBFF;
-    padding: 14px 18px;
+    padding: 14px;
     border-radius: 12px;
     text-align: center;
 }
 
 .label {
-    color: #4A6472;
     font-size: 14px;
-    margin-bottom: 6px;
+    color: #4A6472;
 }
 
-/* Grade & Avg Pills */
 .value {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
 }
 
 .grade-pill {
-    display: inline-block;
-    padding: 6px 16px;
+    padding: 6px 18px;
     border-radius: 20px;
 }
 
-/* Pastel Grade Colors */
+/* Grade Colors */
 .badge-A { background: #D4FADD; color: #1B7A41; }
 .badge-B { background: #E0F3FF; color: #1876A0; }
 .badge-C { background: #FFF1D6; color: #B76B00; }
@@ -106,17 +109,14 @@ body {
 
 .subject-table th {
     background: #1B98E0;
-    color: #fff;
+    color: white;
     padding: 14px;
-    font-size: 14px;
-    text-align: center;
 }
 
 .subject-table td {
     padding: 12px;
-    border-bottom: 1px solid #E1E8F0;
-    font-size: 14px;
     text-align: center;
+    border-bottom: 1px solid #E1E8F0;
 }
 
 .subject-table tr:nth-child(even) {
@@ -125,16 +125,173 @@ body {
 
 .subject-table tr:hover {
     background: #DCF1FF;
-    transition: 0.25s;
 }
 
-/* Animation */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Actions */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
-/* Mobile Responsive */
+.btn-edit {
+    background: #0072CE;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-del {
+    background: #DC2626;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 320px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+}/* ===============================
+   Edit Subject Modal — Styled
+   =============================== */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #FFFFFF;
+    padding: 26px;
+    border-radius: 16px;
+    width: 340px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    animation: modalPop 0.25s ease-out;
+}
+
+.modal-content h3 {
+    font-size: 20px;
+    margin-bottom: 18px;
+    color: #0A3D62;
+    text-align: center;
+}
+
+/* Labels */
+.modal-content label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4A6472;
+    margin-bottom: 6px;
+    margin-top: 12px;
+}
+
+/* Inputs */
+.modal-content input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #D1DCE8;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.modal-content input:focus {
+    border-color: #1B98E0;
+    box-shadow: 0 0 0 2px rgba(27, 152, 224, 0.15);
+}
+
+/* Buttons container */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+/* Primary button */
+.btn-primary {
+    flex: 1;
+    background: #1B98E0;
+    color: #fff;
+    border: none;
+    padding: 10px 0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.btn-primary:hover {
+    background: #1566BA;
+}
+
+/* Secondary button */
+.btn-secondary {
+    flex: 1;
+    background: #E5EEF7;
+    color: #0A3D62;
+    border: none;
+    padding: 10px 0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.btn-secondary:hover {
+    background: #D6E5F2;
+}
+
+/* Modal animation */
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* Responsive */
 @media (max-width: 600px) {
     .info-grid {
         flex-direction: column;

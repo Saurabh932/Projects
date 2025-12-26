@@ -4,7 +4,8 @@ import uuid
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.models import Student
+from src.db.models import Student, User
+from src.auth.utils import get_hash_password
 from .schema import StudentCreateModel, StudentUpdateModel
 
 
@@ -21,16 +22,22 @@ class StudentService:
         if existing:
             return {"error": "Student with this name already exists."}
 
-        new_student = Student(
-            name=student_data.name,
-            average=None,
-            grade=None
-        )
+        # Create linked USER (student account)
+        email = student_data.name.lower().replace(" ", ".") + "@schoolmgmt.com"
 
-        session.add(new_student)
+        user = User(email=email, password_hash=get_hash_password("test12"), role="student", is_verified=True)
+
+        session.add(user)
+        await session.flush()  # ⬅ gives user.uid without commit
+
+        #  Create STUDENT profile linked to user
+        student = Student(uid=uuid.uuid4(), name=student_data.name, user_uid=user.uid, average=None, grade=None)
+
+        session.add(student)
         await session.commit()
-        await session.refresh(new_student)
-        return new_student
+        await session.refresh(student)
+
+        return student
 
 
     

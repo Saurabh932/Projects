@@ -170,17 +170,21 @@ body {
 }
 
 /* Approval Dropdown Animation */
+/* Approval Dropdown Animation */
 #approvalCard {
     overflow: hidden;
     max-height: 0;
     opacity: 0;
+    /* Ensure display isn't 'none' so the transition can actually play */
+    display: block !important; 
     transition: max-height 0.4s ease, opacity 0.3s ease;
 }
 
 #approvalCard.active {
-    max-height: 300px;
+    max-height: 1000px; /* Increased to fit the table content */
     opacity: 1;
     margin-top: 10px;
+    padding-bottom: 10px; /* Space at the bottom */
 }
 
 /* Table */

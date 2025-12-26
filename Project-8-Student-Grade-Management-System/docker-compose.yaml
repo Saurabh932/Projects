@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   backend:
     build: .
@@ -9,7 +7,8 @@ services:
     env_file:
       - src/.env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.0
@@ -17,10 +16,13 @@ services:
     environment:
       MYSQL_DATABASE: grade_mgmt
       MYSQL_ROOT_PASSWORD: "0903"
-    # ports:
-    #   - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mysql_data:

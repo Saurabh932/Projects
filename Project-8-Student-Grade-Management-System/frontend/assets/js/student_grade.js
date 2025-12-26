@@ -17,8 +17,8 @@ const studentUidFromUrl = params.get("uid");
 // - Student logged in directly => /grade/me
 // - Admin viewing a particular student => /grade/{student_uid}
 const apiUrl = studentUidFromUrl
-    ? `http://127.0.0.1:8000/grade/student/${studentUidFromUrl}`
-    : `http://127.0.0.1:8000/grade/me`;
+    ? `/grade/student/${studentUidFromUrl}`
+    : `/grade/me`;
 
 console.log("➡ Using API URL:", apiUrl);
 

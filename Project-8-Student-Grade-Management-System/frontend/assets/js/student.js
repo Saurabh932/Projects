@@ -1,4 +1,3 @@
-// C:\Saurabh\Dev\Projects\Project-8-Student-Grade-Management-System\frontend\assets\js\student.js
 // ===============================
 // Authentication
 // ===============================
@@ -6,6 +5,11 @@ const token = localStorage.getItem("access_token");
 const role = localStorage.getItem("user_role");
 
 if (!token) window.location.href = "/index.html";
+
+if (role !== "admin") {
+    alert("Unauthorized access");
+    window.location.href = "/pages/student_grade.html";
+}
 
 const params = new URLSearchParams(window.location.search);
 const studentUID = params.get("uid");
@@ -21,9 +25,8 @@ if (!studentUID) {
 // ===============================
 async function fetchStudentDetails() {
     try {
-        // This endpoint is correct for fetching full details for one student
         const response = await fetch(
-            `http://127.0.0.1:8000/grade/student/${studentUID}`,
+            `/grade/student/${studentUID}`,
             { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -35,9 +38,17 @@ async function fetchStudentDetails() {
 
         document.getElementById("studentName").innerText = data.name;
         document.getElementById("avg").innerText = data.average ?? "-";
-        document.getElementById("grade").innerText = data.grade ?? "-";
 
-        renderSubjects(data.subjects);
+        const gradeEl = document.getElementById("grade");
+        gradeEl.innerText = data.grade ?? "-";
+        gradeEl.className = "value grade-pill";
+
+        if (data.grade === "A") gradeEl.classList.add("badge-A");
+        else if (data.grade === "B") gradeEl.classList.add("badge-B");
+        else if (data.grade === "C") gradeEl.classList.add("badge-C");
+        else if (data.grade === "F") gradeEl.classList.add("badge-F");
+
+        renderSubjects(data.subjects || []);
     } catch (err) {
         console.error("Error:", err);
     }
@@ -52,41 +63,34 @@ function renderSubjects(subjects) {
     tbody.innerHTML = "";
 
     subjects.forEach(s => {
-        // 👑 CRITICAL: Action buttons only render if the user is an admin
-        const adminActions = role === "admin"
-            ? `
-                <button class="btn-edit" onclick="openEditModal('${s.uid}', ${s.marks_obtain}, ${s.max_marks}, '${s.teacher_name ?? ""}')">Edit</button>
-                <button class="btn-del" onclick="deleteSubject('${s.uid}')">Delete</button>
-              `
-            : `<span class="badge">View Only</span>`;
-
         tbody.innerHTML += `
         <tr>
             <td>${s.subject_name}</td>
             <td>${s.marks_obtain}</td>
             <td>${s.max_marks}</td>
             <td>${s.teacher_name ?? "-"}</td>
-            <td>${adminActions}</td>
+            <td class="actions">
+                <button class="btn-edit" onclick="openEditModal('${s.uid}', ${s.marks_obtain}, ${s.max_marks}, '${s.teacher_name ?? ""}')">Edit</button>
+                <button class="btn-del" onclick="deleteSubject('${s.uid}')">Delete</button>
+            </td>
         </tr>`;
     });
 }
 
 
 // ===============================
-// Edit Subject Modal (Unchanged)
+// Edit Subject Modal
 // ===============================
 let currentSubjectUID = null;
 
 function openEditModal(uid, marks, maxMarks, teacherName) {
-    if (role !== "admin") return alert("Only admin can edit!");
-
     currentSubjectUID = uid;
 
     document.getElementById("editMarks").value = marks;
     document.getElementById("editMaxMarks").value = maxMarks;
     document.getElementById("editTeacherName").value = teacherName || "";
 
-    document.getElementById("editSubjectModal").style.display = "block";
+    document.getElementById("editSubjectModal").style.display = "flex";
 }
 
 function closeEditModal() {
@@ -96,7 +100,7 @@ function closeEditModal() {
 
 
 // ===============================
-// Update Subject (Unchanged)
+// Update Subject
 // ===============================
 async function updateSubject() {
     if (!currentSubjectUID) return;
@@ -108,7 +112,7 @@ async function updateSubject() {
     };
 
     const res = await fetch(
-        `http://127.0.0.1:8000/grade/subject/${currentSubjectUID}`,
+        `/grade/subject/${currentSubjectUID}`,
         {
             method: "PATCH",
             headers: {
@@ -128,14 +132,13 @@ async function updateSubject() {
 
 
 // ===============================
-// Delete Subject (Unchanged)
+// Delete Subject
 // ===============================
 async function deleteSubject(uid) {
-    if (role !== "admin") return alert("Not allowed");
     if (!confirm("Delete subject marks?")) return;
 
     const res = await fetch(
-        `http://127.0.0.1:8000/grade/subject/${uid}`,
+        `/grade/subject/${uid}`,
         { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -147,10 +150,15 @@ async function deleteSubject(uid) {
 
 
 // ===============================
-// Back Button
+// Navigation
 // ===============================
 function goBack() {
     window.location.href = "/pages/dashboard.html";
+}
+
+function logout() {
+    localStorage.clear();
+    window.location.href = "/index.html";
 }
 
 
