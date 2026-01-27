@@ -1,6 +1,6 @@
 import uuid
 from typing import Optional, List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SubjectCreation(BaseModel):
@@ -26,7 +26,7 @@ class StudentGradeResponse(BaseModel):
     name: str
     average: Optional[float] = None
     grade: Optional[str] = None
-    subjects: List[SubjectResponse] = []
+    subjects: List[SubjectResponse] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
