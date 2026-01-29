@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import Login from './auth/Login'
+import StudentList from './students/StudentList';
+
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(Boolean(localStorage.getItem("access_token")));
@@ -11,7 +13,15 @@ function App() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Admin Dashboard</h1>
-      <p>Logged in</p>
+      
+      <button onClick={() => {localStorage.removeItem("access_token");
+                              setLoggedIn(false);}}>
+        Logout
+      </button>
+
+      <hr />
+      <StudentList />
+
     </div>
   )
 }
