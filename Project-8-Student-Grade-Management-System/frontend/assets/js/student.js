@@ -164,3 +164,49 @@ function logout() {
 
 // Load Data
 fetchStudentDetails();
+
+
+async function loadAISummary(uid) {
+    const aiBox = document.getElementById('aiSummary');
+    
+    // IMPORTANT: Match this with your login storage key
+    const authToken = localStorage.getItem("access_token"); 
+
+    if (!uid) return;
+
+    try {
+        const response = await fetch(`/ai/student-summary/${uid}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${authToken}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) throw new Error("API Limit or Server Error");
+
+        const data = await response.json();
+        
+        // Preserve line breaks and emojis
+        aiBox.style.whiteSpace = "pre-wrap";
+        aiBox.innerText = data.summary;
+        
+    } catch (error) {
+        console.error("AI Error:", error);
+        aiBox.innerHTML = "<span style='color: #CF2A2A;'>⚠️ Analysis timed out. Please refresh to try again.</span>";
+    }
+}
+
+// 2. Run both functions when the page loads
+async function initPage() {
+    // First, load the table and student name
+    await fetchStudentDetails();
+    
+    // Then, trigger the AI summary
+    if (studentUID) {
+        await loadAISummary(studentUID);
+    }
+}
+
+// Start the process
+initPage();

@@ -297,3 +297,57 @@ body {
         flex-direction: column;
     }
 }
+
+
+/* AI Academic Remarks Section */
+.ai-card {
+    background: #FFFFFF;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.07);
+    margin-top: 25px;
+    border: 1px solid #E1E8F0;
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right, #0A3D62, #1B98E0);
+}
+
+.ai-card h3 {
+    font-size: 18px;
+    color: #0A3D62;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#aiSummary {
+    font-size: 15px;
+    font-weight: 550;
+    line-height: 1.8;
+    color: #34495E;
+    white-space: pre-wrap;
+    background: #d3dff0;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px dashed #D1DCE8;
+    font-style: italic;
+}
+
+.ai-badge {
+    font-size: 10px;
+    background: #E0F3FF;
+    color: #1B98E0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+}

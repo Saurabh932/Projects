@@ -10,6 +10,7 @@ class Setting(BaseSettings):
     JWT_ALGORITHM : str
     ADMIN_EMAIL: str
     ADMIN_PASSWORD: str
+    HF_TOKEN: str
     
     model_config = SettingsConfigDict(
         env_file="src/.env",

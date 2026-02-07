@@ -17,8 +17,6 @@
 </header>
 
 <main class="container">
-
-    <!-- Student Summary Card -->
     <div class="card student-info">
         <h2 id="studentName"></h2>
         <div class="info-grid">
@@ -33,7 +31,6 @@
         </div>
     </div>
 
-    <!-- Subjects Table -->
     <div class="card">
         <h3>Subjects & Performance</h3>
         <table class="subject-table">
@@ -50,28 +47,14 @@
         </table>
     </div>
 
-</main>
-
-<!-- Edit Subject Modal -->
-<div class="modal" id="editSubjectModal">
-    <div class="modal-content">
-        <h3>Edit Subject</h3>
-
-        <label>Marks Obtained</label>
-        <input type="number" id="editMarks">
-
-        <label>Max Marks</label>
-        <input type="number" id="editMaxMarks">
-
-        <label>Teacher Name</label>
-        <input type="text" id="editTeacherName">
-
-        <div class="modal-actions">
-            <button class="btn btn-primary" onclick="updateSubject()">Save</button>
-            <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-        </div>
+    <div class="ai-card">
+        <h3>
+            AI Performance Analysis 
+            <span class="ai-badge">Powered by AI</span>
+        </h3>
+        <div id="aiSummary">Generating analysis...</div>
     </div>
-</div>
+</main>
 
 <script src="../assets/js/student.js"></script>
 </body>
