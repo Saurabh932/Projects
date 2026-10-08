@@ -1,6 +1,14 @@
+import os
+import uuid
+import shutil
+import tempfile
+
 from fastapi import FastAPI, HTTPException, File, UploadFile, Form, Depends
+
 from app.schema import PostCreate,  PostResponse
 from app.db import Post, create_db_and_tables, get_async_session
+from app.image import imagekit
+from imagekitio import ImageKit
 
 from sqlalchemy import  select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,16 +27,42 @@ app = FastAPI(lifespan=lifespan)
 async def upload_file(file: UploadFile = File(...),
                       caption: str = Form(""),
                       session: AsyncSession = Depends(get_async_session)):
-    
-    post = Post(caption=caption,
-                url="dummy_url",
-                file_type="photo",
-                file_name="dummy name")
 
-    session.add(post)
-    await session.commit()
-    await session.refresh(post)
-    return post
+    temp_file_path = None
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as temp_file:
+            temp_file_path = temp_file.name
+            shutil.copyfileobj(file.file, temp_file)
+
+        with open(temp_file_path, "rb") as upload_file:
+            upload_result = imagekit.files.upload(
+                file=upload_file,
+                file_name=file.filename,
+                use_unique_file_name=True,
+                tags=["backend-upload"]
+            )
+
+        post = Post(
+            caption=caption,
+            url=upload_result.url,
+            file_type="video" if file.content_type.startswith("video/") else "image",
+            file_name=upload_result.name
+        )
+
+        session.add(post)
+        await session.commit()
+        await session.refresh(post)
+        return post
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        if temp_file_path and os.path.exists(temp_file_path):
+            os.unlink(temp_file_path)
+        file.file.close()
+
 
 
 @app.get("/feed")
